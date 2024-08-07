@@ -1,0 +1,11 @@
+body  {
+	background-image: url("/style/images/body_back.png");
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-attachment: fixed;}
+.card{
+	outline: none;
+}
+.card:hover{
+	outline: 8px solid #00000008;
+}
