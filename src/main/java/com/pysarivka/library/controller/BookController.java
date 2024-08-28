@@ -42,9 +42,24 @@ public class BookController {
 		return bookService.findByName(name);
 	}
 
+//	@RequestMapping("/newbook")
+//	public ModelAndView newbook() {
+//		ModelAndView model = new ModelAndView("newbook");
+//		return model;
+//	}
+
 	@RequestMapping("/newbook")
-	public ModelAndView newbook() {
+	public ModelAndView editbook(@RequestParam("id") Long id) {
 		ModelAndView model = new ModelAndView("newbook");
+		if (id == null)
+			return model;
+		Book book = null;
+		Optional<Book> optionalBook = bookService.findById(id);
+		if (optionalBook.isPresent()) {
+			book = optionalBook.get();
+			model.addObject("book", book);
+			return model;
+		}
 		return model;
 	}
 
@@ -52,10 +67,10 @@ public class BookController {
 //	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	public String saveBook(@ModelAttribute("bookform") Book bookform) {
 		Book savedBook = bookService.saveBook(bookform);
-		return "/book?id=" + savedBook.getId().toString();
+		return "book?id=" + savedBook.getId().toString();
 	}
 
-	@RequestMapping("/book")
+	@GetMapping("/book")
 	public ModelAndView openBook(@RequestParam("id") Long id) {
 		ModelAndView model = new ModelAndView("book");
 		Book book = null;

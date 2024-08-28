@@ -1,11 +1,27 @@
-body  {
-	background-image: url("/style/images/body_back.png");
+body {
+	background-image: url("../images/body_back.png");
 	background-size: cover;
 	background-repeat: no-repeat;
-	background-attachment: fixed;}
-.card{
-	outline: none;
+	background-attachment: fixed;
 }
-.card:hover{
+
+.card {
+	outline: none;
+	background: rgb(241,230,235);
+background: radial-gradient(circle, rgba(241,230,235,1) 0%, rgb(176 191 225) 100%);
+}
+
+.card:hover {
 	outline: 8px solid #00000008;
+}
+#myButton{
+background-color: #db3f3f;
+    color: white;
+    border-radius: 8px;
+    line-height: 31px;
+    border: none;
+    height: 2.3rem;
+    margin-top: 2px;
+    width: 191px;
+	
 }

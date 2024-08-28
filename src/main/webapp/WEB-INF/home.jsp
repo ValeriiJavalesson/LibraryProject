@@ -25,7 +25,7 @@
 			<c:forEach var="book" items="${allbooks}">
 				<div class='card m-2 shadow' role='button'
 					style='width: 24rem; height: 550px;' onclick="getbook(${book.id})">
-					<img src='style/images/book.jpg' class='card-img-top'
+					<img class='card-img-top book-image'
 						alt='book_image' height='220px'>
 					<div class="card-body">
 						<h4 class="card-title" id="name">${book.name}</h4>
@@ -40,8 +40,7 @@
 						<p class="card-text m-0" id="price">
 							<b>Ціна: </b>${book.price}</p>
 						<p class="card-text m-0" id="year">
-							<b>Рік друку: </b>${book.year}</p>
-
+							<b>Рік друку: </b>${book.year}</p>						
 						<p class='card-text m-0' id='language'>
 							<b>Мова перекладу:</b>
 							<c:choose>
@@ -56,7 +55,8 @@
 							</c:choose>
 						</p>
 						<c:if test="${book.notes ne ''}">
-							<p class="card-text m-0 overflow-hidden" id="notes" style="height: 46px;">
+							<p class="card-text m-0 overflow-hidden" id="notes"
+								style="height: 46px;">
 								<b>Опис: </b> ${book.notes}
 							</p>
 						</c:if>

@@ -1,10 +1,11 @@
 .book_img {
-	width: 300px;
+	width: 350px;
 	height: 400px;
-	background-image: url("/style/images/book.png");
+	background-image: url("../images/book-brown.png");
 	background-repeat: no-repeat;
 	background-size: contain;
 	background-position: center;
+	margin-right: 2rem;
 }
 
 .bookCard {
@@ -24,7 +25,7 @@
 }
 
 body {
-	background-image: url("/style/images/body_back.png");
+	background-image: url("../images/body_back.png");
 	background-size: cover;
 	background-repeat: no-repeat;
 	background-attachment: fixed;

@@ -1,3 +1,11 @@
 nav {
-background-color: #63728f !important;	
+	background-color: rgb(170, 174, 218) !important;
+}
+
+.book-image {
+	content: url("../images/book.png");
+}
+
+.book-image:hover {
+	content: url("../images/book.gif");
 }

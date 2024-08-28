@@ -10,3 +10,7 @@ function deleteBook(book_id){
 		}
 	});
 }
+
+function editBook(id){
+	window.location = `newbook?id=${id}`;
+}

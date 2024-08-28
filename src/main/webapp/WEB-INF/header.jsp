@@ -14,7 +14,7 @@
 			<div>
 				<a class="navbar-brand" href="home">LIBRARY</a> 
 				<a class="h5 link-body-emphasis link-offset-2 link-underline-opacity-0 link-underline-opacity-100-hover"
-					href="newbook">Додати нову книгу</a>
+					href="newbook?id=0">Додати нову книгу</a>
 			</div>
 
 			<div class="d-flex">

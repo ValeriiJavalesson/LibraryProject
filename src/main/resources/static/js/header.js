@@ -53,7 +53,7 @@ function showResults() {
 		image_lang += "<img " + lang + " class='' alt='lang_icon' height='15px'>";
 
 		cardsContent += " <div class='card m-2 shadow' role='button' style='width: 24rem; height: 550px;' onclick='getbook(" + book.id + ")'>" +
-			"<img src='style/images/book.jpg' class='card-img-top' alt='book_image' height='220px'>" +
+			"<img class='card-img-top book-image' alt='book_image' height='220px'>" +
 
 
 			"<div class='card-body'>" +
@@ -78,5 +78,5 @@ function showResults() {
 };
 
 function getbook(id){
-	window.location = `/book?id=${id}`;
+	window.location = `book?id=${id}`;	
 }
