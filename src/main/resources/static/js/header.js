@@ -41,7 +41,22 @@ function getBooks(word) {
 
 };
 
+function getBooksByLetter(word) {
+	searchedword = '"' + word + '"';
+	if (books == null) {
+		$.get("getbooksbyfirstletter", { word: word }, function(data) {
+			if (data !== '') {
+				filteredBooks = data;
+				filteredBooks.sort((a, b) => a.name > b.name ? 1 : -1);
+				searchedword = word;
+			}
+		}).done(function() {
+			showResults();
+			$("input#search").val("");
+		});
+	}
 
+};
 
 function showResults() {
 	var cardsContent = "<div class='d-flex flex-wrap justify-content-evenly' id='product-cards'>";
@@ -62,7 +77,7 @@ function showResults() {
 			"<p class='card-text m-0' id='registrationNumber'><b>Реєстраційний номер: </b>" + book.registrationNumber + "</p>" +
 			"<p class='card-text m-0' id='edition'><b>Видання: </b>" + book.edition + "</p>" +
 			"<p class='card-text m-0' id='numberOfPages'><b>Кількість сторінок: </b>" + book.numberOfPages + "</p>" +
-			"<p class='card-text m-0' id='price'><b>Ціна: </b>" + book.price + "</p>" +
+			"<p class='card-text m-0' id='price'><b>Ціна: </b>" + book.price +" " + book.currency +"</p>" +
 			"<p class='card-text m-0' id='year'><b>Рік друку: </b>" + book.year + "</p>" +
 			"<p class='card-text m-0' id='language'><b>Мова перекладу: </b>" + image_lang + "</p>";
 		if (book.notes != '') cardsContent += "<p class='card-text m-0 overflow-hidden' id='notes' style='height: 46px;'><b>Опис: </b>" + book.notes + "</p>";

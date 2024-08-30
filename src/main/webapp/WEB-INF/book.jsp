@@ -45,7 +45,7 @@
 						</tr>
 						<tr>
 							<th scope="row">Ціна:</th>
-							<td>${book.price}</td>
+							<td>${book.price} ${book.currency}</td>
 						</tr>
 						<tr>
 							<th scope="row">Рік друку:</th>

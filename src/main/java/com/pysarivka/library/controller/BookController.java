@@ -1,15 +1,12 @@
 package com.pysarivka.library.controller;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.pysarivka.library.LibraryOfPysarivkaApplication;
 import com.pysarivka.library.domain.Book;
 import com.pysarivka.library.service.impl.BookServiceImpl;
 
@@ -41,12 +39,6 @@ public class BookController {
 	public Optional<List<Book>> getByName(@PathVariable String name) {
 		return bookService.findByName(name);
 	}
-
-//	@RequestMapping("/newbook")
-//	public ModelAndView newbook() {
-//		ModelAndView model = new ModelAndView("newbook");
-//		return model;
-//	}
 
 	@RequestMapping("/newbook")
 	public ModelAndView editbook(@RequestParam("id") Long id) {
@@ -102,6 +94,20 @@ public class BookController {
 
 	@GetMapping("/getbooksbyword")
 	public List<Book> getAllBooks(@RequestParam String word) {
+//		if (word.equals("add")) {
+//			List<Book> booksFromTable = LibraryOfPysarivkaApplication.addCurrency();
+//			booksFromTable.stream().forEach(b -> {
+//				System.out.println(b.getName() + " ---> " + b.getCurrency().toString());
+//				Optional<List<Book>> optionalBook = bookService.findByName(b.getName());
+//				if (optionalBook.isPresent()) {
+//					List<Book> list = optionalBook.get();
+//					list.forEach(book -> {
+//						book.setCurrency(b.getCurrency());
+//						bookService.saveBook(book);
+//					});
+//				}
+//			});
+//		}
 		Predicate<Book> namePredicate = b -> b.getName().toLowerCase().contains(word.toLowerCase());
 		Predicate<Book> authorPredicate = b -> b.getAuthor().toLowerCase().contains(word.toLowerCase());
 		Predicate<Book> notesPredicate = b -> b.getNotes().toLowerCase().contains(word.toLowerCase());
@@ -113,6 +119,23 @@ public class BookController {
 		List<Book> filteredBooks = allBooks.stream().filter(namePredicate.or(authorPredicate).or(notesPredicate)
 				.or(yearPredicate).or(editionPredicate).or(langPredicate).or(regNumberPredicate))
 				.collect(Collectors.toList());
+		return filteredBooks;
+	}
+
+	@GetMapping("/getbooksbyfirstletter")
+	public List<Book> getBooksByFirstLetter(@RequestParam String word) {
+		List<Book> allBooks = bookService.findAll();
+		Predicate<Book> nameNumberPredicate = b -> Character.isDigit(b.getName().toLowerCase().charAt(0));
+		Predicate<Book> namePredicate = b -> b.getName().toLowerCase().startsWith(word.toLowerCase());
+		List<Book> filteredBooks;
+		if (word.equals("#")) {
+			filteredBooks = allBooks.stream().filter(nameNumberPredicate).collect(Collectors.toList());
+		} else
+			filteredBooks = allBooks.stream().filter(namePredicate).collect(Collectors.toList());
+
+//		List<Book> result = filteredBooks.stream().sorted((o1, o2)->o1.getName().compareTo(o2.getName())).
+//                collect(Collectors.toList());
+
 		return filteredBooks;
 	}
 

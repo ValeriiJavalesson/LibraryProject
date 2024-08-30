@@ -51,9 +51,12 @@
 					value="${book.numberOfPages}">
 			</div>
 			<div>
-				<label for="price" class="form-label">Ціна:</label> <input
-					name="price" type="number" class="form-control" id="price"
-					value="${book.price}">
+				<label for="price" class="form-label">Ціна:</label>
+				<div class="d-flex flex-row">
+					<input name="price" type="number" class="form-control me-1" id="price" value="${book.price}"> 
+					<input name="currency" type="text"	class="form-control ms-1" id="currency" value="${book.currency}">
+				</div>
+
 			</div>
 			<div>
 				<label for="year" class="form-label">Рік друку:</label> <input

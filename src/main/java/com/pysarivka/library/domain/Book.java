@@ -35,5 +35,6 @@ public class Book {
 	private String language;
 	@Column
 	private String notes;
-
+	@Column
+	private String currency;
 }
