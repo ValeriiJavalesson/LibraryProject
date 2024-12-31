@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 import com.pysarivka.library.security.CustomUserDetailService;
 
@@ -30,9 +31,15 @@ public class SecurityConfig {
 		http.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests(
 						auth -> auth.requestMatchers("/cabinet/**").authenticated().requestMatchers("/**").permitAll())
-				.formLogin(formlogin -> formlogin.loginPage("/login").defaultSuccessUrl("/home", true)
-						.failureUrl("/login?error=true").permitAll());
+				.formLogin(formlogin -> formlogin.loginPage("/login").defaultSuccessUrl("/allbooks?page=1&word=", true)
+						.failureUrl("/login?error=true").permitAll())
+				.logout((logout) -> logout.logoutSuccessHandler(logoutSuccessHandler()));
 		return http.build();
+	}
+	
+	@Bean
+	public LogoutSuccessHandler logoutSuccessHandler() {
+		return new CustomLogoutSuccessHandler();
 	}
 	
 	@Bean

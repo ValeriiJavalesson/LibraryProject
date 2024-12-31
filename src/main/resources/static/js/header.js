@@ -1,14 +1,29 @@
 let books = null;
 let filteredBooks = null;
 let searchedword = "";
+let username = "";
 $(document).ready(function() {
-	//getBooks("");
+	username = $('input#username').val();
 });
+
+function login() {
+	window.location.href = "login";
+}
+
+function logout() {
+	//$.get('logout', document.URL);
+	//	window.location.reload;
+	window.location.href = "logout";
+}
+
 
 searchBar = document.getElementById('search');
 searchBar.addEventListener("keydown", (e) => {
 	if (e.key === 'Enter') {
-		findBook();
+		if (username === "") {
+			findBook();
+		} else findBookAdmin();
+
 	}
 });
 
@@ -26,6 +41,14 @@ function findBook() {
 			$("input#search").val("");
 		});
 	}
+}
+function findBookAdmin() {
+	var word = $("input#search").val();
+	word = word.trim();
+	if (word.length > 2) {
+		window.location = `allbooks?page=1&word=${word}`
+	}
+
 }
 
 function getBooks(word) {
@@ -64,6 +87,7 @@ function showResults() {
 		var lang;
 		if (book.language === 'Russian') lang = "src='style/images/ru.png'";
 		if (book.language === 'Ukrainian') lang = "src='style/images/ua.png'";
+		if (book.language === 'English') lang = "src='style/images/gb.png'";
 		var image_lang = '';
 		image_lang += "<img " + lang + " class='' alt='lang_icon' height='15px'>";
 
@@ -77,7 +101,7 @@ function showResults() {
 			"<p class='card-text m-0' id='registrationNumber'><b>Реєстраційний номер: </b>" + book.registrationNumber + "</p>" +
 			"<p class='card-text m-0' id='edition'><b>Видання: </b>" + book.edition + "</p>" +
 			"<p class='card-text m-0' id='numberOfPages'><b>Кількість сторінок: </b>" + book.numberOfPages + "</p>" +
-			"<p class='card-text m-0' id='price'><b>Ціна: </b>" + book.price +" " + book.currency +"</p>" +
+			"<p class='card-text m-0' id='price'><b>Ціна: </b>" + book.price + " " + book.currency + "</p>" +
 			"<p class='card-text m-0' id='year'><b>Рік друку: </b>" + book.year + "</p>" +
 			"<p class='card-text m-0' id='language'><b>Мова перекладу: </b>" + image_lang + "</p>";
 		if (book.notes != '') cardsContent += "<p class='card-text m-0 overflow-hidden' id='notes' style='height: 46px;'><b>Опис: </b>" + book.notes + "</p>";
@@ -92,6 +116,51 @@ function showResults() {
 
 };
 
-function getbook(id){
-	window.location = `book?id=${id}`;	
+function getbook(id) {
+	window.location = `book?id=${id}`;
 }
+
+function topFunction() {
+  document.body.scrollTop = 0; 
+  document.documentElement.scrollTop = 0; 
+}
+
+function buttomFunction() {
+  window.scrollTo(0, document.body.scrollHeight);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

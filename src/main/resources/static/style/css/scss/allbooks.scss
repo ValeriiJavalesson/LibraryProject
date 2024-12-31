@@ -1,0 +1,140 @@
+.allbooks_table {
+  //counter-reset: row-num -1;
+  border-collapse: collapse;
+  width: 97%;
+  position: relative;
+  margin-bottom: 1rem;
+
+  tbody {
+    tr>td>button.toEditButton {
+      position: absolute;
+      height: 32px;
+      aspect-ratio: 1 / 1;
+      background-position: center;
+      background-size: 32px;
+      background-repeat: no-repeat;
+      opacity: 0.3;
+      background-image: url(../images/pen.webp);
+      left: 6px;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+    tr td input{
+      width: 100%;
+    }
+    tr td textarea{
+      min-height: 6rem;
+      resize: none;
+    }
+  }
+}
+
+.centerAlign{
+text-align: center;
+}
+
+.leftAlign{
+  text-align: left;
+}
+
+.rightAlign{
+  text-align: right;
+}
+
+.allbooks_table thead {
+  height: 80px;
+  position: sticky;
+  top: 53px;
+}
+
+.allbooks_table tr:not(.editingRow) {
+  counter-increment: row-num;
+}
+
+.allbooks_table tr td:first-child {
+  text-align: right;
+}
+
+.allbooks_table tr td:first-child::before {
+  content: counter(row-num);
+  width: 0.1rem;
+}
+
+.allbooks_table td,
+.allbooks_table th {
+  background-color: #ffffffb0;
+  border: 1px solid #ddd;
+  padding: 8px;
+  font-size: 16px;
+  margin: 0;
+  padding: 5px;
+  height: 3rem;
+  word-break: break-word;
+}
+
+.allbooks_table th {
+  background-color: #6d88da;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  text-align: left;
+  color: #000000;
+}
+
+.allbooks_table tr:hover {
+  background-color: #b6b6b6;
+}
+
+input[type=checkbox] {
+  height: 40px;
+  width: 40px;
+  display: block;
+  margin: 0 auto;
+}
+
+.checkbox_td {
+  vertical-align: middle;
+  text-align: center;
+}
+
+#table_title {
+  text-align: center;
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  width: 100%;
+  height: 43px;
+  font-family: "Times New Roman", Times, serif;
+  border: none;
+  resize: none;
+  overflow: hidden;
+}
+
+#preparePrintButton {
+  position: relative;
+  display: block;
+  margin: auto;
+  background-image: url(../images/printer.png);
+  background-size: 50px;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 50px;
+  width: 50px;
+  background-color: #00000000;
+  border: none;
+}
+
+#table_title_button {
+  display: block;
+  background-color: wheat;
+  height: 37px;
+  margin: 0 auto 10px;
+  border: solid 1px #80808057;
+  border-radius: 4px;
+  width: 10rem;
+
+  &:hover {
+    background-color: rgb(129, 101, 49);
+  }
+}

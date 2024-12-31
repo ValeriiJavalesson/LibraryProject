@@ -7,6 +7,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Add new book</title>
+<link rel="icon" type="image/x-icon" href="style/images/favicon.ico">
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
 	rel="stylesheet">
@@ -66,28 +67,22 @@
 			<div>
 				<label for="language" class="form-label">Мова перекладу:</label> <select
 					name="language" class="form-select" aria-label="Language select"
-					id="language">
-
-					<%-- <c:if test="${book.language == 'Ukrainian'}">
-						<option selected="selected" value="Ukrainian">Українска</option>
-						<option value="Russian">Російська</option>
-					</c:if>
-					<c:if test="${book.language == 'Russian'}">
-						<option value="Ukrainian">Українска</option>
-						<option selected="selected" value="Russian">Російська</option>
-					</c:if>
-					<c:if test="${book.language == ''}">
-						<option value="Ukrainian">Українска</option>
-						<option value="Russian">Російська</option>
-					</c:if> --%>
+					id="language">			
 					<c:choose>
 						<c:when test="${book.language == 'Russian'}">
 							<option value="Ukrainian">Українска</option>
 							<option selected="selected" value="Russian">Російська</option>
+							<option value="English">Англійська</option>
+						</c:when>
+						<c:when test="${book.language == 'English'}">
+							<option value="Ukrainian">Українска</option>
+							<option value="Russian">Російська</option>
+							<option selected="selected" value="English">Англійська</option>
 						</c:when>
 						<c:otherwise>
 							<option selected="selected" value="Ukrainian">Українска</option>
 							<option value="Russian">Російська</option>
+							<option value="English">Англійська</option>
 						</c:otherwise>
 					</c:choose>
 				</select>

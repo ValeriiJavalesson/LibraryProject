@@ -37,4 +37,8 @@ public class Book {
 	private String notes;
 	@Column
 	private String currency;
+	@Column
+	private Boolean childhood;
+	@Column
+	private Boolean closedSection;
 }

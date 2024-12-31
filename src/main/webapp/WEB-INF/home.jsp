@@ -6,6 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Welcome to Library!</title>
+<link rel="icon" type="image/x-icon" href="style/images/favicon.ico">
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
 	rel="stylesheet">
@@ -18,8 +19,8 @@
 	<div>
 		<div class="searchedword bold h5 ms-4"></div>
 	</div>
-	<div class="container">
-		<div class="d-flex fw-bold justify-content-between mb-2">		
+		<div class="container">
+			<div class="d-flex fw-bold justify-content-between mb-2">		
 				<a role="button" onclick="getBooksByLetter('#')">#</a>	
 				<a role="button" onclick="getBooksByLetter('А')">А</a> 
 				<a role="button" onclick="getBooksByLetter('Б')">Б</a> 
@@ -53,27 +54,53 @@
 				<a role="button" onclick="getBooksByLetter('Ю')">Ю</a>
 				<a role="button" onclick="getBooksByLetter('Я')">Я</a>		
 			</div>
+			<div class="d-flex fw-bold justify-content-between mb-2">	
+				<a role="button" onclick="getBooksByLetter('A')">A</a> 
+				<a role="button" onclick="getBooksByLetter('B')">B</a> 
+				<a role="button" onclick="getBooksByLetter('C')">C</a>
+				<a role="button" onclick="getBooksByLetter('D')">D</a>
+				<a role="button" onclick="getBooksByLetter('E')">E</a>
+				<a role="button" onclick="getBooksByLetter('F')">F</a>
+				<a role="button" onclick="getBooksByLetter('G')">G</a>
+				<a role="button" onclick="getBooksByLetter('H')">H</a>
+				<a role="button" onclick="getBooksByLetter('I')">I</a>
+				<a role="button" onclick="getBooksByLetter('J')">J</a>
+				<a role="button" onclick="getBooksByLetter('K')">K</a>
+				<a role="button" onclick="getBooksByLetter('L')">L</a>
+				<a role="button" onclick="getBooksByLetter('M')">M</a>
+				<a role="button" onclick="getBooksByLetter('N')">N</a>
+				<a role="button" onclick="getBooksByLetter('O')">O</a>
+				<a role="button" onclick="getBooksByLetter('P')">P</a>
+				<a role="button" onclick="getBooksByLetter('Q')">Q</a>
+				<a role="button" onclick="getBooksByLetter('R')">R</a>
+				<a role="button" onclick="getBooksByLetter('S')">S</a>
+				<a role="button" onclick="getBooksByLetter('T')">T</a>
+				<a role="button" onclick="getBooksByLetter('Y')">Y</a>
+				<a role="button" onclick="getBooksByLetter('V')">V</a>
+				<a role="button" onclick="getBooksByLetter('W')">W</a>
+				<a role="button" onclick="getBooksByLetter('X')">X</a>
+				<a role="button" onclick="getBooksByLetter('Y')">Y</a>
+				<a role="button" onclick="getBooksByLetter('Z')">Z</a>		
+			</div>
 		</div>	
 	<div class="container main-content">		
 		<div class="d-flex flex-wrap justify-content-evenly"
 			id="product-cards">
 			<c:forEach var="book" items="${allbooks}">
-				<div class='card m-2 shadow' role='button'
-					style='width: 24rem; height: 550px;' onclick="getbook(${book.id})">
+				<div class='card m-2 overflow-hidden shadow' role='button'
+					style='width: 20rem; height: 410px;' onclick="getbook(${book.id})">
 					<img class='card-img-top book-image' alt='book_image'
-						height='220px'>
+						height='120px'>
 					<div class="card-body">
-						<h4 class="card-title" id="name">${book.name}</h4>
+						<h4 class="card-title overflow-hidden" id="name" style="height: 4rem;">${book.name}</h4>
 						<h6 class="card-title" id="author">${book.author}</h6>
 						<hr>
 						<p class="card-text m-0" id="registrationNumber">
 							<b>Реєстраційний номер: </b>${book.registrationNumber}</p>
 						<p class="card-text m-0" id="edition">
 							<b>Видання: </b>${book.edition}</p>
-						<p class="card-text m-0" id="numberOfPages">
-							<b>Кількість сторінок: </b>${book.numberOfPages}</p>
-						<p class="card-text m-0" id="price">
-							<b>Ціна: </b>${book.price} ${book.currency}</p>
+						
+						
 						<p class="card-text m-0" id="year">
 							<b>Рік друку: </b>${book.year}</p>
 						<p class='card-text m-0' id='language'>
@@ -86,6 +113,9 @@
 								<c:when test="${book.language == 'Ukrainian'}">
 									<img src='style/images/ua.png' class='' alt='lang_icon'
 										height='15px'>
+								</c:when>
+								<c:when test="${book.language == 'English'}">
+										<img src='style/images/gb.png' class='' alt='lang_icon' height='15px'>
 								</c:when>
 							</c:choose>
 						</p>

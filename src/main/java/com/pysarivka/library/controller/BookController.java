@@ -7,19 +7,19 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.pysarivka.library.LibraryOfPysarivkaApplication;
 import com.pysarivka.library.domain.Book;
 import com.pysarivka.library.service.impl.BookServiceImpl;
 
@@ -29,20 +29,44 @@ public class BookController {
 	@Autowired
 	private BookServiceImpl bookService;
 
+	@GetMapping("/")
+	public ModelAndView init() {
+		return home();
+	}
+
+	@RequestMapping("/login")
+	public ModelAndView login() {
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		ModelAndView model = new ModelAndView("login");
+		if (principal instanceof UserDetails) {
+			return home();
+		}
+		return model;
+	}
+
 	@GetMapping("/welcome")
 	public String welcome() {
 		return "Welcome Page...";
 	}
 
-	@GetMapping("/get_book/{name}")
+	@GetMapping("/get_book/{id}")
 //	@PreAuthorize("hasAuthority('ROLE_USER')")
-	public Optional<List<Book>> getByName(@PathVariable String name) {
-		return bookService.findByName(name);
+	public Book getByName(@PathVariable Long id) {
+		Book book = null;
+		if (id != null) {
+			Optional<Book> optionalBook = bookService.findById(id);
+			if (optionalBook.isPresent()) {
+				book = optionalBook.get();
+			}
+		}
+		return book;
 	}
 
 	@RequestMapping("/newbook")
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	public ModelAndView editbook(@RequestParam("id") Long id) {
 		ModelAndView model = new ModelAndView("newbook");
+		model.addObject("username", getUser());
 		if (id == null)
 			return model;
 		Book book = null;
@@ -56,15 +80,33 @@ public class BookController {
 	}
 
 	@PostMapping("/save_book")
-//	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	public String saveBook(@ModelAttribute("bookform") Book bookform) {
 		Book savedBook = bookService.saveBook(bookform);
 		return "book?id=" + savedBook.getId().toString();
 	}
 
+	@PostMapping("/book_section")
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+	public String changeBookSection(@ModelAttribute Book book) {
+		Book savedbook = null;
+		Optional<Book> optionalBook = bookService.findById(book.getId());
+		if (optionalBook.isPresent()) {
+			savedbook = optionalBook.get();
+			if (book.getChildhood() != null)
+				savedbook.setChildhood(book.getChildhood());
+			if (book.getClosedSection() != null)
+				savedbook.setClosedSection(book.getClosedSection());
+			bookService.updateBook(savedbook);
+			return "success";
+		}
+		return "error";
+	}
+
 	@GetMapping("/book")
 	public ModelAndView openBook(@RequestParam("id") Long id) {
 		ModelAndView model = new ModelAndView("book");
+		model.addObject("username", getUser());
 		Book book = null;
 		Optional<Book> optionalBook = bookService.findById(id);
 		if (optionalBook.isPresent()) {
@@ -76,7 +118,6 @@ public class BookController {
 	}
 
 	@GetMapping("/home")
-//	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	public ModelAndView home() {
 		ModelAndView model = new ModelAndView("home");
 		List<Book> allBooks = null;
@@ -89,32 +130,65 @@ public class BookController {
 				randomBooks.add(book);
 		}
 		model.addObject("allbooks", randomBooks);
+		model.addObject("username", getUser());
+		return model;
+	}
+
+	@GetMapping("/allbooks")
+	public ModelAndView allbooks(@RequestParam Integer page, @RequestParam String word) {
+		ModelAndView model = new ModelAndView("allbooks");
+		List<Book> allBooks = null;
+//		allBooks = bookService.findAll();
+		allBooks = getAllBooks(word);
+		List<Book> sortedBooks = allBooks.stream().sorted((o1, o2) -> o1.getYear().compareTo(o2.getYear()))
+				.collect(Collectors.toList());
+		int booksInPage = sortedBooks.size() > 500 ? 500 : sortedBooks.size();
+		double numberOfPages = Math.ceil((double) sortedBooks.size() / (double) booksInPage);
+		List<Book> sublist;
+		if (page != null && page > 0 && page <= numberOfPages) {
+
+			int startIndex = booksInPage * (page - 1);
+			int endIndex = booksInPage * (page - 1) + booksInPage;
+			if (endIndex > sortedBooks.size())
+				endIndex = sortedBooks.size();
+			sublist = sortedBooks.subList(startIndex, endIndex);
+			model.addObject("page", page);
+		} else {
+			sublist = sortedBooks.subList(0, booksInPage);
+			model.addObject("page", 1);
+		}
+		model.addObject("word", word);
+		model.addObject("booksOnPage", booksInPage);
+		model.addObject("numberOfPages", numberOfPages);
+		model.addObject("allbooks", sublist);
+		model.addObject("username", getUser());
+		return model;
+	}
+
+	@GetMapping("/adminsearch")
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+	public ModelAndView adminsearch(@RequestParam String word) {
+		ModelAndView model = new ModelAndView("allbooks");
+		List<Book> allBooks = null;
+		allBooks = getAllBooks(word);
+		List<Book> sortedBooks = allBooks.stream().sorted((o1, o2) -> o1.getYear().compareTo(o2.getYear()))
+				.collect(Collectors.toList());
+		model.addObject("allbooks", sortedBooks);
+		model.addObject("username", getUser());
+		model.addObject("searchedword", word);
 		return model;
 	}
 
 	@GetMapping("/getbooksbyword")
 	public List<Book> getAllBooks(@RequestParam String word) {
-//		if (word.equals("add")) {
-//			List<Book> booksFromTable = LibraryOfPysarivkaApplication.addCurrency();
-//			booksFromTable.stream().forEach(b -> {
-//				System.out.println(b.getName() + " ---> " + b.getCurrency().toString());
-//				Optional<List<Book>> optionalBook = bookService.findByName(b.getName());
-//				if (optionalBook.isPresent()) {
-//					List<Book> list = optionalBook.get();
-//					list.forEach(book -> {
-//						book.setCurrency(b.getCurrency());
-//						bookService.saveBook(book);
-//					});
-//				}
-//			});
-//		}
-		Predicate<Book> namePredicate = b -> b.getName().toLowerCase().contains(word.toLowerCase());
-		Predicate<Book> authorPredicate = b -> b.getAuthor().toLowerCase().contains(word.toLowerCase());
-		Predicate<Book> notesPredicate = b -> b.getNotes().toLowerCase().contains(word.toLowerCase());
-		Predicate<Book> yearPredicate = b -> b.getYear().toString().contains(word.toLowerCase());
-		Predicate<Book> editionPredicate = b -> b.getEdition().toLowerCase().contains(word.toLowerCase());
-		Predicate<Book> langPredicate = b -> b.getLanguage().toLowerCase().contains(word.toLowerCase());
-		Predicate<Book> regNumberPredicate = b -> b.getRegistrationNumber().toString().contains(word.toLowerCase());
+		Predicate<Book> namePredicate = b -> String.valueOf(b.getName()).toLowerCase().contains(word.toLowerCase());
+		Predicate<Book> authorPredicate = b -> String.valueOf(b.getAuthor()).toLowerCase().contains(word.toLowerCase());
+		Predicate<Book> notesPredicate = b -> String.valueOf(b.getNotes()).toLowerCase().contains(word.toLowerCase());
+		Predicate<Book> yearPredicate = b -> String.valueOf(b.getYear()).toLowerCase().contains(word.toLowerCase());
+		Predicate<Book> editionPredicate = b -> String.valueOf(b.getEdition()).toLowerCase().contains(word.toLowerCase());
+		Predicate<Book> langPredicate = b -> String.valueOf(b.getLanguage()).toLowerCase().contains(word.toLowerCase());
+		Predicate<Book> regNumberPredicate = b -> String.valueOf(b.getRegistrationNumber()).toLowerCase()
+				.contains(word.toLowerCase());
 		List<Book> allBooks = bookService.findAll();
 		List<Book> filteredBooks = allBooks.stream().filter(namePredicate.or(authorPredicate).or(notesPredicate)
 				.or(yearPredicate).or(editionPredicate).or(langPredicate).or(regNumberPredicate))
@@ -132,23 +206,45 @@ public class BookController {
 			filteredBooks = allBooks.stream().filter(nameNumberPredicate).collect(Collectors.toList());
 		} else
 			filteredBooks = allBooks.stream().filter(namePredicate).collect(Collectors.toList());
-
-//		List<Book> result = filteredBooks.stream().sorted((o1, o2)->o1.getName().compareTo(o2.getName())).
-//                collect(Collectors.toList());
-
 		return filteredBooks;
 	}
 
-	@PutMapping("/update_book")
-	public String updateUser(@RequestBody Book book) {
-		bookService.updateBook(book);
-		return "Student successfully updated";
+	@PostMapping("/update_book")
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+	public String updateUser(@ModelAttribute Book book) {
+
+		Book bookFromDb = null;
+		Optional<Book> optionalBook = bookService.findById(book.getId());
+		if (optionalBook.isPresent()) {
+			bookFromDb = optionalBook.get();
+			bookFromDb.setAuthor(book.getAuthor());
+			bookFromDb.setName(book.getName());
+			bookFromDb.setRegistrationNumber(book.getRegistrationNumber());
+			bookFromDb.setEdition(book.getEdition());
+			bookFromDb.setNumberOfPages(book.getNumberOfPages());
+			bookFromDb.setPrice(book.getPrice());
+			bookFromDb.setYear(book.getYear());
+			bookFromDb.setNotes(book.getNotes());
+			bookFromDb.setLanguage(book.getLanguage());
+			bookService.updateBook(bookFromDb);
+			return "success";
+		}
+		return "error";
 	}
 
 	@RequestMapping(value = "/delete_book", method = RequestMethod.DELETE)
-//	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	public String delete_book(@RequestParam Long id) {
 		bookService.deleteById((long) id);
 		return "Книгу видалено!";
+	}
+
+	@GetMapping("/getcurrentuser")
+	public String getUser() {
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if (principal instanceof UserDetails) {
+			String username = ((UserDetails) principal).getUsername();
+			return username;
+		}
+		return "";
 	}
 }
