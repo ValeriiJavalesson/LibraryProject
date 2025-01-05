@@ -1,7 +1,6 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"	pageEncoding="UTF-8" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -87,6 +86,18 @@
 					</c:choose>
 				</select>
 			</div>
+			
+			<div>
+				<label for="genre" class="form-label" >Жанр:</label> 
+				<c:set var="bookGenre" value="${book.genre}"></c:set>
+				<select	name="genre" class="form-select" aria-label="Genre select" id="genre" data-genre="${bookGenre.id}">						
+					<c:forEach var="genre" items="${genres}">			
+						<option value="${genre.id}">${genre.name}</option>
+					</c:forEach>	
+				</select>
+			</div>
+			
+			
 			<div class="form-floating mt-2">
 				<textarea name="notes" class="form-control"
 					placeholder="Додайте опис книги" id="notes" style="height: 100px">${book.notes}</textarea>

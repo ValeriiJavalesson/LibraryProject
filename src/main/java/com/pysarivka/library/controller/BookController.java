@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,17 +22,27 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.pysarivka.library.domain.Book;
+import com.pysarivka.library.domain.Genre;
+import com.pysarivka.library.dto.BookDto;
 import com.pysarivka.library.service.impl.BookServiceImpl;
+import com.pysarivka.library.service.impl.GenreServiceImpl;
 
 @RestController
 public class BookController {
 
 	@Autowired
 	private BookServiceImpl bookService;
+	@Autowired
+	private GenreServiceImpl genreService;
 
 	@GetMapping("/")
 	public ModelAndView init() {
 		return home();
+	}
+
+	@RequestMapping("/books")
+	public ModelAndView books() {
+		return allbooks((int) 1, "", (int) 0);
 	}
 
 	@RequestMapping("/login")
@@ -65,7 +76,9 @@ public class BookController {
 	@RequestMapping("/newbook")
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	public ModelAndView editbook(@RequestParam("id") Long id) {
+
 		ModelAndView model = new ModelAndView("newbook");
+		model.addObject("genres", genreService.findAll());
 		model.addObject("username", getUser());
 		if (id == null)
 			return model;
@@ -135,24 +148,41 @@ public class BookController {
 	}
 
 	@GetMapping("/allbooks")
-	public ModelAndView allbooks(@RequestParam Integer page, @RequestParam String word) {
+	public ModelAndView allbooks(@RequestParam Integer page, @RequestParam String word, @RequestParam int genreId) {
+		List<Genre> allGenres = genreService.findAll();
 		ModelAndView model = new ModelAndView("allbooks");
 		List<Book> allBooks = null;
-//		allBooks = bookService.findAll();
 		allBooks = getAllBooks(word);
-		List<Book> sortedBooks = allBooks.stream().sorted((o1, o2) -> o1.getYear().compareTo(o2.getYear()))
+		List<Book> filteredBooks = new ArrayList<Book>();
+		
+		if (genreId != 0) {			
+			Genre genre = allGenres.stream().filter(g -> g.getId().equals((long) genreId)).findFirst().orElse(null);
+			if (genre != null) {
+				filteredBooks = allBooks.stream().filter(b -> b.getGenre().getId().equals(genre.getId()))
+						.collect(Collectors.toList());
+				model.addObject("genreId", genre.getId());
+			} else {
+				model.addObject("genreId", 0);
+				filteredBooks = allBooks;
+			}
+		} else {
+			model.addObject("genreId", 0);
+			filteredBooks = allBooks;
+		}
+
+		List<Book> sortedBooks = filteredBooks.stream().sorted((o1, o2) -> o1.getYear().compareTo(o2.getYear()))
 				.collect(Collectors.toList());
 		int booksInPage = sortedBooks.size() > 500 ? 500 : sortedBooks.size();
 		double numberOfPages = Math.ceil((double) sortedBooks.size() / (double) booksInPage);
 		List<Book> sublist;
 		if (page != null && page > 0 && page <= numberOfPages) {
-
 			int startIndex = booksInPage * (page - 1);
 			int endIndex = booksInPage * (page - 1) + booksInPage;
 			if (endIndex > sortedBooks.size())
 				endIndex = sortedBooks.size();
 			sublist = sortedBooks.subList(startIndex, endIndex);
 			model.addObject("page", page);
+
 		} else {
 			sublist = sortedBooks.subList(0, booksInPage);
 			model.addObject("page", 1);
@@ -162,6 +192,9 @@ public class BookController {
 		model.addObject("numberOfPages", numberOfPages);
 		model.addObject("allbooks", sublist);
 		model.addObject("username", getUser());
+		model.addObject("numberOfAllBooks", sortedBooks.size());
+		model.addObject("allGenres", allGenres);
+
 		return model;
 	}
 
@@ -185,7 +218,8 @@ public class BookController {
 		Predicate<Book> authorPredicate = b -> String.valueOf(b.getAuthor()).toLowerCase().contains(word.toLowerCase());
 		Predicate<Book> notesPredicate = b -> String.valueOf(b.getNotes()).toLowerCase().contains(word.toLowerCase());
 		Predicate<Book> yearPredicate = b -> String.valueOf(b.getYear()).toLowerCase().contains(word.toLowerCase());
-		Predicate<Book> editionPredicate = b -> String.valueOf(b.getEdition()).toLowerCase().contains(word.toLowerCase());
+		Predicate<Book> editionPredicate = b -> String.valueOf(b.getEdition()).toLowerCase()
+				.contains(word.toLowerCase());
 		Predicate<Book> langPredicate = b -> String.valueOf(b.getLanguage()).toLowerCase().contains(word.toLowerCase());
 		Predicate<Book> regNumberPredicate = b -> String.valueOf(b.getRegistrationNumber()).toLowerCase()
 				.contains(word.toLowerCase());
@@ -209,24 +243,30 @@ public class BookController {
 		return filteredBooks;
 	}
 
-	@PostMapping("/update_book")
+	@RequestMapping("/update_book")
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
-	public String updateUser(@ModelAttribute Book book) {
-
-		Book bookFromDb = null;
-		Optional<Book> optionalBook = bookService.findById(book.getId());
+	public String updateUser(@RequestBody BookDto bookDto) {
+		System.out.println(bookDto);
+		Book book = null;
+		Optional<Book> optionalBook = bookService.findById(bookDto.getId());
 		if (optionalBook.isPresent()) {
-			bookFromDb = optionalBook.get();
-			bookFromDb.setAuthor(book.getAuthor());
-			bookFromDb.setName(book.getName());
-			bookFromDb.setRegistrationNumber(book.getRegistrationNumber());
-			bookFromDb.setEdition(book.getEdition());
-			bookFromDb.setNumberOfPages(book.getNumberOfPages());
-			bookFromDb.setPrice(book.getPrice());
-			bookFromDb.setYear(book.getYear());
-			bookFromDb.setNotes(book.getNotes());
-			bookFromDb.setLanguage(book.getLanguage());
-			bookService.updateBook(bookFromDb);
+			book = optionalBook.get();
+			book.setAuthor(bookDto.getAuthor());
+			book.setChildhood(bookDto.getChildhood());
+			book.setClosedSection(bookDto.getClosedSection());
+			book.setCurrency(bookDto.getCurrency());
+			book.setEdition(bookDto.getEdition());
+			book.setGenre(bookDto.getGenre());
+			book.setId(bookDto.getId());
+			book.setLanguage(bookDto.getLanguage());
+			book.setName(bookDto.getName());
+			book.setNotes(bookDto.getNotes());
+			book.setNumberOfPages(bookDto.getNumberOfPages());
+			book.setPrice(bookDto.getPrice());
+			book.setRegistrationNumber(bookDto.getRegistrationNumber());
+			book.setYear(bookDto.getYear());
+			Book savedBook = bookService.updateBook(book);
+			System.out.println(savedBook);
 			return "success";
 		}
 		return "error";

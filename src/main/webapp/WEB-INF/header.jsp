@@ -14,8 +14,9 @@
 			<div>
 				<a class="navbar-brand" href="home">LIBRARY</a>
 				<security:authorize access="hasRole('ROLE_ADMIN')">
-					<a class="btn btn-primary" href="allbooks?page=1&word=">Всі книги</a>
+					<a class="btn btn-primary" href="books">Всі книги</a>
 					<a class="btn btn-primary" href="newbook?id=0">Додати нову книгу</a>
+					<a class="btn btn-primary" href="newgenre?id=0">Додати новий жанр</a>
 				</security:authorize>
 			</div>
 
@@ -39,10 +40,9 @@
 			</div>
 		</div>
 		<div>
-			<input hidden="hidden" id="username" value="${username}" />
-		</div>
-		<div>
 			<input hidden="hidden" id="searchedword" value="${searchedword}" />
+			<input id="currentpage" hidden="hidden" value="${page}">
+			<input hidden="hidden" id="genreId" value="${genreId}" />
 		</div>
 		<div class="scrollButtons">
 			<button onclick="topFunction()" id="toTopButton" title="TOP">↑</button>

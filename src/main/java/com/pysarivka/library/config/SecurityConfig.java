@@ -31,7 +31,7 @@ public class SecurityConfig {
 		http.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests(
 						auth -> auth.requestMatchers("/cabinet/**").authenticated().requestMatchers("/**").permitAll())
-				.formLogin(formlogin -> formlogin.loginPage("/login").defaultSuccessUrl("/allbooks?page=1&word=", true)
+				.formLogin(formlogin -> formlogin.loginPage("/login").defaultSuccessUrl("/books", true)
 						.failureUrl("/login?error=true").permitAll())
 				.logout((logout) -> logout.logoutSuccessHandler(logoutSuccessHandler()));
 		return http.build();

@@ -22,17 +22,17 @@ nav {
 	color: white;
 	cursor: pointer;
 	border-radius: 33px;
-	font-size: 25px;
-    padding-bottom: 12px;
-    width: 2rem;
+	font-size: 30px;
+    padding-bottom: 5px;
+    width: 2.6rem;
     aspect-ratio: 1 / 1;
     overflow: hidden;
-    line-height: 25px;
+    line-height: 30px;
     text-align: center;
 }
 
 #toButtomButton{
-	bottom: 4rem;
+	bottom: 3.2rem;
 }
 
 #toTopButton:hover, #toButtomButton:hover {

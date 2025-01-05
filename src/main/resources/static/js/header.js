@@ -2,8 +2,10 @@ let books = null;
 let filteredBooks = null;
 let searchedword = "";
 let username = "";
+let genreId = '';
 $(document).ready(function() {
 	username = $('input#username').val();
+	genreId = $('input#genreId').val();
 });
 
 function login() {
@@ -46,7 +48,7 @@ function findBookAdmin() {
 	var word = $("input#search").val();
 	word = word.trim();
 	if (word.length > 2) {
-		window.location = `allbooks?page=1&word=${word}`
+		window.location = `allbooks?page=1&word=${word}&genreId=`+genreId;
 	}
 
 }

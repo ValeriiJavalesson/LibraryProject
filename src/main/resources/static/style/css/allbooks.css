@@ -1,8 +1,11 @@
 .allbooks_table {
   border-collapse: collapse;
-  width: 97%;
+  width: 92%;
   position: relative;
   margin-bottom: 1rem;
+}
+.allbooks_table .remove_before::before {
+  content: none !important;
 }
 .allbooks_table tbody tr > td > button.toEditButton {
   position: absolute;
@@ -17,6 +20,16 @@
 }
 .allbooks_table tbody tr > td > button.toEditButton:hover {
   opacity: 1;
+}
+.allbooks_table tbody tr.editingRow {
+  border-bottom: solid 2px red;
+  border-left: solid 2px red;
+  border-right: solid 2px red;
+}
+.allbooks_table tbody tr:has(+ .editingRow) {
+  border-top: solid 2px red;
+  border-left: solid 2px red;
+  border-right: solid 2px red;
 }
 .allbooks_table tbody tr td input {
   width: 100%;
@@ -62,7 +75,7 @@
   background-color: rgba(255, 255, 255, 0.6901960784);
   border: 1px solid #ddd;
   padding: 8px;
-  font-size: 16px;
+  font-size: 15px;
   margin: 0;
   padding: 5px;
   height: 3rem;
@@ -131,4 +144,64 @@ input[type=checkbox] {
 }
 #table_title_button:hover {
   background-color: rgb(129, 101, 49);
+}
+
+#filter {
+  position: fixed;
+  bottom: 10rem;
+  right: 0.2rem;
+  display: flex;
+  flex-direction: row-reverse;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+}
+#filter button {
+  aspect-ratio: 1/1;
+  width: 3rem;
+  border-radius: 1.5rem;
+  background-color: #225aff;
+  border: none;
+  background-image: url(../images/filter.png);
+  background-size: 1.5rem;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+#filter #filter_list {
+  height: 0rem;
+  width: 0rem;
+  transition: height 0.4s ease, width 0.4s ease;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 8px;
+  position: absolute;
+  right: 3.2rem;
+  bottom: 0rem;
+}
+#filter #filter_list label {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 2px;
+  padding: 3px;
+  background-color: #0f518a;
+  border-radius: 5px;
+}
+#filter #filter_list label:hover {
+  background-color: #0079ff;
+  border-radius: 5px;
+}
+#filter #filter_list input {
+  height: 16px;
+  width: 16px;
+  margin: 0;
+}
+#filter #filter_list.active {
+  height: 32rem;
+  width: 20rem;
 }/*# sourceMappingURL=allbooks.css.map */
