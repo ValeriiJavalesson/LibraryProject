@@ -7,6 +7,10 @@
 .allbooks_table .remove_before::before {
   content: none !important;
 }
+.allbooks_table .sectionFilter {
+  height: 26px;
+  accent-color: #f2ff00;
+}
 .allbooks_table tbody tr > td > button.toEditButton {
   position: absolute;
   height: 32px;

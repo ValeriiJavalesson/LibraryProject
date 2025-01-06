@@ -70,16 +70,27 @@
 		</div>
 		<div>
 			<c:forEach var="i" begin="1" end="${numberOfPages}">
-				<c:url value="/allbooks" var="pageURL">
+				<c:url value="/allbooks" var="pageURL">				
 					<c:param name="page" value="${i}" />
 					<c:param name="word" value="${word}" />
-					<c:param name="genreId" value="${genreId}" />
+					<c:param name="genreId" value="${genreId}" />	
+											
 				</c:url>
-				<a role="button" class="btn btn-light m-1" href="${pageURL}">${i}</a>
+				<c:set var="sectionURL" value=""></c:set>							
+					<c:forEach var="section" items="${sections}">
+						<c:set var="sectionURL" value="${sectionURL}&sections=${section}" />
+					</c:forEach>	
+					<c:if test="${sectionURL eq ''}">
+						<c:set var="sectionURL" value="&sections="></c:set>
+					</c:if>
+				<a role="button" class="btn btn-light m-1" href="${pageURL}${sectionURL}">${i}</a>
 			</c:forEach>
 		</div>
 	</div>
 	<div class="main-content d-flex justify-content-center" id="printableArea">
+		<c:forEach var="section" items="${sections}">
+			<input type="text" name="section" value="${section}" hidden="hidden"/>
+		</c:forEach>
 		<table class="allbooks_table" style="counter-reset: row-num ${booksOnPage * (page - 1)-1}">
 			<colgroup>
 				<col width="7%">
@@ -119,8 +130,19 @@
 					<th colspan="1">Жанр</th>
 					<th colspan="1">Опис</th>
 					<security:authorize access="hasRole('ROLE_ADMIN')">
-						<th>Дитяче</th>
-						<th>Закрита секція</th>
+											
+						<th>
+							<div class="align-items-center d-flex flex-column">
+								<div class="text-center">Дитяче</div>
+								<input type="checkbox" class="sectionFilter" name="childhood" onclick="section_filter()">
+							</div>
+						</th>
+						<th>
+							<div class="align-items-center d-flex flex-column">
+								<div class="text-center">Закрита секція</div>
+								<input type="checkbox" class="sectionFilter"  name="closedSection" onclick="section_filter()">
+							</div>
+						</th>
 					</security:authorize>
 
 				</tr>
@@ -150,7 +172,8 @@
 										<input type="checkbox" data-book_id="${book.id}" id="${book.id}_checkbox_childhood" onclick="checkbox_childhood(this)" />
 									</c:otherwise>
 								</c:choose></td>
-							<td class="checkbox_td"><c:choose>
+							<td class="checkbox_td">								
+								<c:choose>
 									<c:when test="${book.closedSection==true}">
 										<input type="checkbox" data-book_id="${book.id}" id="${book.id}_checkbox_closedSection" checked onclick="closedSection_change(this)" />
 									</c:when>
@@ -163,10 +186,23 @@
 				</c:forEach>
 			</tbody>
 		</table>
-	</div>
-	<div class="ms-2 mb-3">
+	</div>		
+	<div>
 		<c:forEach var="i" begin="1" end="${numberOfPages}">
-			<a role="button" class="btn btn-light m-1" href="allbooks?page=${i}&word=${word}">${i}</a>
+			<c:url value="/allbooks" var="pageURL">				
+				<c:param name="page" value="${i}" />
+				<c:param name="word" value="${word}" />
+				<c:param name="genreId" value="${genreId}" />	
+										
+			</c:url>
+			<c:set var="sectionURL" value=""></c:set>							
+				<c:forEach var="section" items="${sections}">
+					<c:set var="sectionURL" value="${sectionURL}&sections=${section}" />
+				</c:forEach>	
+				<c:if test="${sectionURL eq ''}">
+					<c:set var="sectionURL" value="&sections="></c:set>
+				</c:if>
+			<a role="button" class="btn btn-light m-1" href="${pageURL}${sectionURL}">${i}</a>
 		</c:forEach>
 	</div>
 	<div id="filter">

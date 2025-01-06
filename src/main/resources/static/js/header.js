@@ -45,10 +45,15 @@ function findBook() {
 	}
 }
 function findBookAdmin() {
+	let sectionsUrl = '';
+	for (let i = 0; i < sections.length; i++) {
+		sectionsUrl += '&sections=' + sections[i];
+	}
+	if (sections.length == 0) sectionsUrl = '&sections=';
 	var word = $("input#search").val();
 	word = word.trim();
 	if (word.length > 2) {
-		window.location = `allbooks?page=1&word=${word}&genreId=`+genreId;
+		window.location = `allbooks?page=1&word=${word}&genreId=`+genreId + sectionsUrl;
 	}
 
 }

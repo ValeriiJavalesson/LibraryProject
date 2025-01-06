@@ -1,6 +1,7 @@
 let page = 1;
 let word = "";
 let allGenres = '';
+let sections = [];
 $(document).ready(function() {
 	page = $('input#currentpage').val();
 	word = $('input#word').val();
@@ -10,6 +11,13 @@ $(document).ready(function() {
 		}
 	});
 	$('input.filter_value[type=radio][value=' + genreId + ']').attr('checked', true);
+	let arr = $('input[type=text][name=section]');
+	$(arr).each(function(i) {
+		sections.push($(this).val());
+	});
+	$.each(sections, function(i, item) {
+		$('input[type=checkbox][name='+ item + ']').attr('checked', true);
+	});
 });
 
 function checkbox_childhood(inp) {
@@ -205,10 +213,6 @@ function saveBook() {
 			name: $('select[name=genre]').find('option:selected').text()
 		}
 	};
-	//obj = JSON.stringify({'book':obj});
-	/*$.post("update_book", book).done(function() {
-		window.location.reload();
-	});   */
 	$.ajax({
 		url: "update_book",
 		type: 'POST',
@@ -238,18 +242,39 @@ function displayFilters() {
 
 function applyFilter() {
 	let objcts = $('input.filter_value[type=radio]:checked');
-	let url = "allbooks?page=" + page + "&word=" + word + "&genreId=" + $(objcts).val();
+	let sectionsUrl = '';
+	for (let i = 0; i < sections.length; i++) {
+		sectionsUrl += '&sections=' + sections[i];
+	}
+	if (sections.length == 0) sectionsUrl = '&sections=';
+	let url = "allbooks?page=" + page + "&word=" + word + "&genreId=" + $(objcts).val() + sectionsUrl;
 	window.location.href = url;
 
 }
 
 function clearSearchedWord() {
 	let objcts = $('input.filter_value[type=radio]:checked');
-	let url = "allbooks?page=" + page + "&word=" + "&genreId=" + $(objcts).val();
+	let sectionsUrl = '';
+	for (let i = 0; i < sections.length; i++) {
+		sectionsUrl += '&sections=' + sections[i];
+	}
+	if (sections.length == 0) sectionsUrl = '&sections=';
+	let url = "allbooks?page=" + page + "&word=" + "&genreId=" + $(objcts).val() + sectionsUrl;
 	window.location.href = url;
 
 }
 
+function section_filter() {
+	let childhood = $('input[type=checkbox][name=childhood]').is(':checked');
+	let closedSection = $('input[type=checkbox][name=closedSection]').is(':checked');
+	console.log('childhood - ' + childhood);
+	console.log('closedSection - ' + closedSection);
+
+	sections = [];
+	if (childhood) sections.push('childhood');
+	if (closedSection) sections.push('closedSection');
+	applyFilter();
+}
 
 
 

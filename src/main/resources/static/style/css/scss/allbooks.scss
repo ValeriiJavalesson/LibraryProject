@@ -9,6 +9,11 @@
   position: relative;
   margin-bottom: 1rem;
 
+  .sectionFilter{
+    height: 26px;
+    accent-color: #f2ff00;    
+  }
+
   tbody {
     tr>td>button.toEditButton {
       position: absolute;

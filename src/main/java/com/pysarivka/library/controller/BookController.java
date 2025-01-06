@@ -42,7 +42,8 @@ public class BookController {
 
 	@RequestMapping("/books")
 	public ModelAndView books() {
-		return allbooks((int) 1, "", (int) 0);
+		String[] sections = {};
+		return allbooks((int) 1, "", (int) 0, sections);
 	}
 
 	@RequestMapping("/login")
@@ -148,14 +149,15 @@ public class BookController {
 	}
 
 	@GetMapping("/allbooks")
-	public ModelAndView allbooks(@RequestParam Integer page, @RequestParam String word, @RequestParam int genreId) {
+	public ModelAndView allbooks(@RequestParam Integer page, @RequestParam String word, @RequestParam int genreId,
+			@RequestParam String[] sections) {
 		List<Genre> allGenres = genreService.findAll();
 		ModelAndView model = new ModelAndView("allbooks");
 		List<Book> allBooks = null;
 		allBooks = getAllBooks(word);
 		List<Book> filteredBooks = new ArrayList<Book>();
-		
-		if (genreId != 0) {			
+
+		if (genreId != 0) {
 			Genre genre = allGenres.stream().filter(g -> g.getId().equals((long) genreId)).findFirst().orElse(null);
 			if (genre != null) {
 				filteredBooks = allBooks.stream().filter(b -> b.getGenre().getId().equals(genre.getId()))
@@ -168,6 +170,26 @@ public class BookController {
 		} else {
 			model.addObject("genreId", 0);
 			filteredBooks = allBooks;
+		}
+
+		if (sections.length > 0) {
+			for (int i = 0; i < sections.length; i++) {
+				switch (sections[i]) {
+				case "childhood": {
+					filteredBooks = filteredBooks.stream()
+							.filter(b -> b.getChildhood() != null && b.getChildhood())
+							.collect(Collectors.toList());
+					break;
+				}
+				case "closedSection": {
+					filteredBooks = filteredBooks.stream()
+							.filter(b -> b.getClosedSection() != null && b.getClosedSection())
+							.collect(Collectors.toList());
+					break;
+				}
+
+				}
+			}
 		}
 
 		List<Book> sortedBooks = filteredBooks.stream().sorted((o1, o2) -> o1.getYear().compareTo(o2.getYear()))
@@ -194,6 +216,7 @@ public class BookController {
 		model.addObject("username", getUser());
 		model.addObject("numberOfAllBooks", sortedBooks.size());
 		model.addObject("allGenres", allGenres);
+		model.addObject("sections", sections);
 
 		return model;
 	}
@@ -252,8 +275,8 @@ public class BookController {
 		if (optionalBook.isPresent()) {
 			book = optionalBook.get();
 			book.setAuthor(bookDto.getAuthor());
-			book.setChildhood(bookDto.getChildhood());
-			book.setClosedSection(bookDto.getClosedSection());
+//			book.setChildhood(bookDto.getChildhood());
+//			book.setClosedSection(bookDto.getClosedSection());
 			book.setCurrency(bookDto.getCurrency());
 			book.setEdition(bookDto.getEdition());
 			book.setGenre(bookDto.getGenre());
