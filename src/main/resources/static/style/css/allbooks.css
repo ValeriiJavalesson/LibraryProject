@@ -165,10 +165,14 @@ input[type=checkbox] {
   border-radius: 1.5rem;
   background-color: #225aff;
   border: none;
+  opacity: 0.6;
   background-image: url(../images/filter.png);
   background-size: 1.5rem;
   background-repeat: no-repeat;
   background-position: center;
+}
+#filter button:hover {
+  opacity: 1;
 }
 #filter #filter_list {
   height: 0rem;

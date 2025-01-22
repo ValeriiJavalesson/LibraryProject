@@ -20,7 +20,7 @@
 		<div class="searchedword bold h5 ms-4"></div>
 	</div>
 		<div class="container">
-			<div class="d-flex fw-bold justify-content-between mb-2">		
+			<div class="d-flex fw-bold justify-content-between mb-2 text-light ">		
 				<a role="button" onclick="getBooksByLetter('#')">#</a>	
 				<a role="button" onclick="getBooksByLetter('А')">А</a> 
 				<a role="button" onclick="getBooksByLetter('Б')">Б</a> 
@@ -54,7 +54,7 @@
 				<a role="button" onclick="getBooksByLetter('Ю')">Ю</a>
 				<a role="button" onclick="getBooksByLetter('Я')">Я</a>		
 			</div>
-			<div class="d-flex fw-bold justify-content-between mb-2">	
+			<div class="d-flex fw-bold justify-content-between mb-2 text-light">	
 				<a role="button" onclick="getBooksByLetter('A')">A</a> 
 				<a role="button" onclick="getBooksByLetter('B')">B</a> 
 				<a role="button" onclick="getBooksByLetter('C')">C</a>
@@ -83,53 +83,29 @@
 				<a role="button" onclick="getBooksByLetter('Z')">Z</a>		
 			</div>
 		</div>	
-	<div class="container main-content">		
-		<div class="d-flex flex-wrap justify-content-evenly"
-			id="product-cards">
-			<c:forEach var="book" items="${allbooks}">
-				<div class='card m-2 overflow-hidden shadow' role='button'
-					style='width: 20rem; height: 410px;' onclick="getbook(${book.id})">
-					<img class='card-img-top book-image' alt='book_image'
-						height='120px'>
-					<div class="card-body">
-						<h4 class="card-title overflow-hidden" id="name" style="height: 4rem;">${book.name}</h4>
-						<h6 class="card-title" id="author">${book.author}</h6>
-						<hr>
-						<p class="card-text m-0" id="registrationNumber">
-							<b>Реєстраційний номер: </b>${book.registrationNumber}</p>
-						<p class="card-text m-0" id="edition">
-							<b>Видання: </b>${book.edition}</p>
-						
-						
-						<p class="card-text m-0" id="year">
-							<b>Рік друку: </b>${book.year}</p>
-						<p class='card-text m-0' id='language'>
-							<b>Мова перекладу:</b>
-							<c:choose>
-								<c:when test="${book.language == 'Russian'}">
-									<img src='style/images/ru.png' class='' alt='lang_icon'
-										height='15px'>
-								</c:when>
-								<c:when test="${book.language == 'Ukrainian'}">
-									<img src='style/images/ua.png' class='' alt='lang_icon'
-										height='15px'>
-								</c:when>
-								<c:when test="${book.language == 'English'}">
-										<img src='style/images/gb.png' class='' alt='lang_icon' height='15px'>
-								</c:when>
-							</c:choose>
-						</p>
-						<c:if test="${book.notes ne ''}">
-							<p class="card-text m-0 overflow-hidden" id="notes"
-								style="height: 46px;">
-								<b>Опис: </b> ${book.notes}
-							</p>
-						</c:if>
-
-					</div>
+	<div class="main-content">		
+		<c:forEach var="genre" items="${allgenres}" >
+		<c:set value="${genre.key.name}" var="genre_name"></c:set>
+			<div class="genre_self">
+				<div class="genre_title">
+					<c:out value="${genre_name}"></c:out>
 				</div>
-			</c:forEach>
-		</div>
+				<div class="books_self"	id="product-cards">			
+					<c:forEach var="book" items="${genre.value}">
+					 <div class="book" data-pages="${book.numberOfPages}" data-author="${book.author}" data-name="${book.name}">		
+						<div class="book_title">
+							<div class="book_author" data-content="${book.author}">${book.author}</div>
+							<div class="book_name" data-content="${book.name}">${book.name}</div>
+						</div>
+						<div class="book_year">${book.year}</div> 					
+					</div>
+					</c:forEach>
+				</div>
+				<div class="more_books">
+					<a role="button" href="genre?id=${genre.key.id}">Більше книг...</a>
+				</div>
+			</div>
+		</c:forEach>
 	</div>
 	<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 	<script

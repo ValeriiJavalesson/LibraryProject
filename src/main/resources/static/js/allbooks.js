@@ -199,6 +199,7 @@ function cancelEditBook() {
 function saveBook() {
 	let book = {
 		id: $('input[name=id]').val(),
+		registrationNumber: $('input[name=registrationNumber]').val(),
 		name: $('textarea[name=name]').val(),
 		author: $('textarea[name=author]').val(),
 		edition: $('textarea[name=edition]').val(),

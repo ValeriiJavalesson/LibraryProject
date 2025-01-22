@@ -1,40 +1,51 @@
 nav {
-	background-color: rgb(170, 174, 218) !important;
+  background-color: rgb(170, 174, 218) !important;
+   background-color: #FF9800 !important;
+  box-shadow: 1px 5px 20px black;
+}
+nav .search_line::before {
+  content: attr(data-before);
+  position: relative;
+  top: 5px;
+  left: 44px;
+  font-size: 18px;
 }
 
 .book-image {
-	content: url("../images/book.png");
+  content: url("../images/book.png");
 }
 
 .book-image:hover {
-	content: url("../images/book.gif");
+  content: url("../images/book.gif");
 }
 
-#toTopButton, #toButtomButton {
-	border: solid 2px #0091ff;
-	display: block;
-	position: fixed;
-	bottom: 6.2rem;
-	right: 0.3rem;
-	z-index: 99;
-	outline: none;
-	background-color: #555;
-	color: white;
-	cursor: pointer;
-	border-radius: 33px;
-	font-size: 30px;
-    padding-bottom: 5px;
-    width: 2.6rem;
-    aspect-ratio: 1 / 1;
-    overflow: hidden;
-    line-height: 30px;
-    text-align: center;
+#toTopButton,
+#toButtomButton {
+  border: solid 2px #0091ff;
+  display: block;
+  position: fixed;
+  bottom: 6.2rem;
+  right: 0.3rem;
+  z-index: 99;
+  outline: none;
+  background-color: #555;
+  color: white;
+  cursor: pointer;
+  border-radius: 33px;
+  font-size: 30px;
+  padding-bottom: 5px;
+  width: 2.6rem;
+  aspect-ratio: 1/1;
+  overflow: hidden;
+  line-height: 30px;
+  text-align: center;
 }
 
-#toButtomButton{
-	bottom: 3.2rem;
+#toButtomButton {
+  bottom: 3.2rem;
 }
 
-#toTopButton:hover, #toButtomButton:hover {
-	background-color: #0091ff;
-}
+#toTopButton:hover,
+#toButtomButton:hover {
+  background-color: #0091ff;
+}/*# sourceMappingURL=header.css.map */

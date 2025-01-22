@@ -6,6 +6,7 @@ let genreId = '';
 $(document).ready(function() {
 	username = $('input#username').val();
 	genreId = $('input#genreId').val();
+	
 });
 
 function login() {
@@ -13,8 +14,6 @@ function login() {
 }
 
 function logout() {
-	//$.get('logout', document.URL);
-	//	window.location.reload;
 	window.location.href = "logout";
 }
 

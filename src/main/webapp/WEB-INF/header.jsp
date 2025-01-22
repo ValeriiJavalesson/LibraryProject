@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="style/css/header.css">
 </head>
 <body>
-	<nav class="navbar navbar-expand-lg mb-3 border-bottom sticky-top ">
+	<nav class="navbar navbar-expand-lg mb-3 sticky-top ">
 		<div class="container-fluid">
 			<div>
 				<a class="navbar-brand" href="home">LIBRARY</a>
@@ -20,18 +20,20 @@
 				</security:authorize>
 			</div>
 
-			<div class="d-flex">
-				<input class="form-control me-2" type=search id="search" placeholder="Search" value="${word}">
+			<div class="d-flex">	
+				<c:set var="search_placeholder" value="${word}"></c:set>
+				<c:if test="${search_placeholder eq ''}">
+					<c:set var="search_placeholder" value="Пошук..."></c:set>
+				</c:if>							
+				<input class="form-control  me-2" type=search id="search" placeholder="${search_placeholder}">
 				<security:authorize access="isAuthenticated()">
-					<button class="btn btn-outline-success" onclick="findBookAdmin()">Пошук</button>
+					<button class="btn btn-outline-dark me-2" onclick="findBookAdmin()">Пошук</button>
 				</security:authorize>
 				<security:authorize access="!isAuthenticated()">
-					<button class="btn btn-outline-success" onclick="findBook()">Пошук</button>
+					<button class="btn btn-outline-dark me-2" onclick="findBook()">Пошук</button>
 				</security:authorize>
-
-
 				<security:authorize access="!isAuthenticated()">
-					<button class="btn btn-success" onclick="login()">Ввійти</button>
+					<button class="btn btn-secondary" onclick="login()">Ввійти</button>
 				</security:authorize>
 				<security:authorize access="isAuthenticated()">
 					<button class="btn btn-danger " onclick="logout()">Вийти</button>

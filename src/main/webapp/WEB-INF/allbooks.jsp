@@ -26,8 +26,8 @@
 			<input type="button" id="table_title_button" onclick="print('printableArea')" value="Друкувати" hidden="hidden" />
 		</security:authorize>
 	</div>
-	<div class="ms-2">
-		<div class="h6">
+	<div  class="ms-2" data-bs-theme="dark">
+		<div class="h6 text-light" data-bs-theme="dark">
 			<c:if test="${word ne ''}">
 				<button class="btn btn-close" onclick="clearSearchedWord()"></button><span>Результати пошуку за запитом "<c:out value="${word}"></c:out>"</span>
 			</c:if>
@@ -42,8 +42,8 @@
 				</c:choose>
 			</c:forEach>			
 			<div>
-				<label class="h3 mb-3">${genreName}</label>
-				<div class="h6">
+				<label class="h3 mb-3 text-light">${genreName}</label>
+				<div class="h6 text-light">
 					<c:choose>
 						<c:when test="${numberOfAllBooks > 0}">
 							<fmt:formatNumber value="${booksOnPage * (page - 1) + 1}" maxFractionDigits="0" pattern="0"/>
@@ -83,7 +83,14 @@
 					<c:if test="${sectionURL eq ''}">
 						<c:set var="sectionURL" value="&sections="></c:set>
 					</c:if>
-				<a role="button" class="btn btn-light m-1" href="${pageURL}${sectionURL}">${i}</a>
+					<c:choose>
+						<c:when test="${i eq page}">
+							<a role="button" class="btn btn-light fw-bold m-1 text-bg-info" href="${pageURL}${sectionURL}">${i}</a>
+						</c:when>
+						<c:otherwise>
+							<a role="button" class="btn btn-light m-1" href="${pageURL}${sectionURL}">${i}</a>
+						</c:otherwise>
+					</c:choose>				
 			</c:forEach>
 		</div>
 	</div>
@@ -202,7 +209,14 @@
 				<c:if test="${sectionURL eq ''}">
 					<c:set var="sectionURL" value="&sections="></c:set>
 				</c:if>
-			<a role="button" class="btn btn-light m-1" href="${pageURL}${sectionURL}">${i}</a>
+				<c:choose>
+					<c:when test="${i eq page}">
+						<a role="button" class="btn btn-light fw-bold m-1 text-bg-info" href="${pageURL}${sectionURL}">${i}</a>
+					</c:when>
+					<c:otherwise>
+						<a role="button" class="btn btn-light m-1" href="${pageURL}${sectionURL}">${i}</a>
+					</c:otherwise>
+				</c:choose>
 		</c:forEach>
 	</div>
 	<div id="filter">

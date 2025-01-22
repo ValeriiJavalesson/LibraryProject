@@ -1,27 +1,249 @@
+@font-face {
+	font-family: "Jura";
+	src: url("../fonts/Jura/Jura-VariableFont_wght.ttf");
+}
+
+@font-face {
+	font-family: "Cormorant_Infant";
+	src: url("../fonts/Cormorant_Infant/CormorantInfant-Regular.ttf");
+}
+
+@font-face {
+	font-family: "Cormorant_Infant";
+	src: url("../fonts/Cormorant_Infant/CormorantInfant-Bold.ttf");
+	font-weight: bold;
+}
+
+@font-face {
+	font-family: "Cormorant_Infant";
+	src: url("../fonts/Cormorant_Infant/CormorantInfant-Italic.ttf");
+	font-weight: italic;
+}
+
 body {
-	background-image: url("../images/body_back.png");
+	background-image: url("../images/back.jpg");
 	background-size: cover;
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 }
 
-.card {
-	outline: none;
-	background: rgb(241,230,235);
-background: radial-gradient(circle, rgba(241,230,235,1) 0%, rgb(176 191 225) 100%);
+.main-content {
+	--bs-gutter-x: 1.5rem;
+	--bs-gutter-y: 0;
+	padding-right: calc(var(--bs-gutter-x)* .5);
+	padding-left: calc(var(--bs-gutter-x)* .5);
+	margin-left: auto;
+	margin-right: auto;
+	width: 100%;
+}
+
+.genre_self {
+	display: flex;
+	flex-direction: row;
+	position: relative;
+	align-items: flex-end;
+}
+
+.genre_title {
+	width: 16%;
+	align-content: center;
+	background-color: white;
+	height: 87px;
+	text-align: center;
+	margin: 2px;
+	border: solid 3px #ffffff;
+	border-spacing: -15px;
+	box-shadow: inset 0px 0 0px 1px black;
+	font-size: 1.6em;
+}
+
+.books_self {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	align-content: flex-start;
+	flex-wrap: wrap;
+	width: 90%;
+	position: relative;
+	height: 22rem;
+}
+
+.genre_self:after {
+	content: "";
+	position: absolute;
+	width: 100%;
+	height: 1.3rem;
+	background-image: url("../images/wood.png");
+	background-position: center;
+	background-size: 100%;
+	background-repeat: no-repeat;
+	bottom: -1.3rem;
+	border-radius: 3px;
+	box-shadow: -1px 20px 30px 10px black;
+}
+
+.more_books {
+	position: relative;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	height: 100%;
+	width: 30%;
+}
+
+.more_books a {
+	text-decoration: none;
+	color: #999999;
+	font-size: 20px;
+}
+
+.more_books a:hover {
+	color: #ffffff;
+	text-decoration: underline;
+}
+
+.book {
+	width: 2rem;
+	height: 310px;
+	position: relative;
+	background-color: #a50505;
+	border: solid 3px #000;
+	display: flex;
+	flex-direction: column;
+	border-top-left-radius: 9rem 2rem;
+	border-top-right-radius: 9rem 2rem;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0px 0px 1px 2px #4444446b;
+	color: white;
+	background-image: url(../images/book_cover.png);
+	background-position: center;
+	background-size: cover;
+	background-repeat: no-repeat;
+	flex-wrap: nowrap;
+	cursor: pointer;
+}
+
+.book_title {
+	display: flex;
+	flex-direction: row;
+	height: 86%;
+	writing-mode: vertical-rl;
+	text-orientation: mixed;
+	justify-content: center;
+}
+
+.book_title:after {
+	content: "";
+	height: 25%;
+	width: 88%;
+	position: absolute;
+	top: 4px;
+	left: 0px;
+	/* bottom: 0; */
+	right: 0;
+	margin: auto;
+	border-radius: 3px;
+	background: rgb(255, 226, 0);
+	background: linear-gradient(90deg, rgba(255, 226, 0, 0) 14%,
+		rgb(255 255 255/ 7%) 66%);
+}
+
+.book_author, .book_name {
+	display: block;
+	position: relative;
+	font-size: 14px;
+	align-content: center;
+	text-wrap: pretty;
+	padding: 0 2%;
+	writing-mode: vertical-rl;
+	text-orientation: mixed;
+	rotate: 180deg;
+	font-family: Cormorant_Infant;
+	z-index: 20;
+}
+
+.book_author {
+	height: 28%;
+	width: 100%;
+	align-self: center;
+	margin-bottom: 5%;
+	position: relative;
+}
+
+.book:before {
+	content: attr(data-author) '\A' attr(data-name);
+    white-space: pre;
+    opacity: 0;
+    display: block;
+    position: absolute;
+    top: -105px;
+    z-index: 999;
+    height: 8em;
+    font-size: 0.8em;
+    width: 16em;
+    font-weight: bold;
+    text-align: center;
+    text-wrap: wrap;
+    padding: 5px;
+    align-content: center;
+    overflow: hidden;
+    border-radius: 14px;
+    transition: opacity 0.8s ease;
+    z-index: -5;
+    background-image: url(../images/comment.png);
+    background-position: center;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    padding-bottom: 2em;
+    font-family: 'Cormorant_Infant';
+}
+
+.book:hover:before {
+	opacity: 1;
+	z-index: 1050;
+}
+
+.book:after {
+	content: "";
+	position: absolute;
+	height: 60%;
+	width: 100%;
+	top: 28%;
+	border-bottom: solid 2px white;
+	border-top: double 4px white;
+}
+
+.book:hover {
+	background-blend-mode: luminosity;
+}
+
+.book_name {
+	height: 67%;
+	text-align: center;
+	margin-bottom: 3%;
+}
+
+.book_year {
+	font-size: 0.8em;
+	height: 10%;
+	text-align: center;
+	font-family: Jura;
+	font-size: 0.7rem;
+	z-index: 20;
 }
 
 .card:hover {
 	outline: 8px solid #00000008;
 }
-#myButton{
-background-color: #db3f3f;
-    color: white;
-    border-radius: 8px;
-    line-height: 31px;
-    border: none;
-    height: 2.3rem;
-    margin-top: 2px;
-    width: 191px;
-	
+
+#myButton {
+	background-color: #db3f3f;
+	color: white;
+	border-radius: 8px;
+	line-height: 31px;
+	border: none;
+	height: 2.3rem;
+	margin-top: 2px;
+	width: 191px;
 }

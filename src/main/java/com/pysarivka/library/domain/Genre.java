@@ -23,5 +23,13 @@ public class Genre implements Serializable{
 	@NonNull
 	@Column
 	private String name;
+	
+	public Genre() {};
+	
+	public Genre(String name) {
+		this.name = name;
+	}
+	
+	
 
 }

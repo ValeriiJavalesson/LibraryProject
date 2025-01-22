@@ -2,9 +2,11 @@ package com.pysarivka.library.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -136,13 +138,18 @@ public class BookController {
 		ModelAndView model = new ModelAndView("home");
 		List<Book> allBooks = null;
 		allBooks = bookService.findAll();
+		Map<Genre, List<Book>> allgenres = allBooks.stream().filter(b -> !b.getGenre().getId().equals((long) 1))
+				.collect(Collectors.groupingBy(Book::getGenre, Collectors.toList()));
+		allgenres.entrySet().stream()
+		.forEach(entry -> entry.setValue(entry.getValue().stream().limit((long)20).toList()));
 		List<Book> randomBooks = new ArrayList<Book>();
-		while (randomBooks.size() < 20) {
+		while (randomBooks.size() < 12) {
 			int randomNumber = (int) (Math.random() * (allBooks.size() - 0));
 			Book book = allBooks.get(randomNumber);
 			if (!randomBooks.contains(book))
 				randomBooks.add(book);
 		}
+		model.addObject("allgenres", allgenres);
 		model.addObject("allbooks", randomBooks);
 		model.addObject("username", getUser());
 		return model;
@@ -176,8 +183,7 @@ public class BookController {
 			for (int i = 0; i < sections.length; i++) {
 				switch (sections[i]) {
 				case "childhood": {
-					filteredBooks = filteredBooks.stream()
-							.filter(b -> b.getChildhood() != null && b.getChildhood())
+					filteredBooks = filteredBooks.stream().filter(b -> b.getChildhood() != null && b.getChildhood())
 							.collect(Collectors.toList());
 					break;
 				}
