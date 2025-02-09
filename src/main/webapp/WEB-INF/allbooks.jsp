@@ -218,21 +218,19 @@
 					</c:otherwise>
 				</c:choose>
 		</c:forEach>
-	</div>
-	<div id="filter">
-		<button role="button" class="filter_button" onclick="displayFilters()"></button>
-		<div id="filter_list">
-				<label for="genre0">Всі жанри<input name="genre" class="filter_value" type="radio" data-filter_id="0" value="0" id="genre0" onclick="applyFilter()"
-					></label>
-			<c:forEach var="genre" items="${allGenres}">
-				<label for="genre${genre.id}">${genre.name}<input name="genre" class="filter_value" type="radio" data-filter_id="${genre.id}" value="${genre.id}" id="genre${genre.id}" onclick="applyFilter()"
-					></label>
-			</c:forEach>
+	</div>	
+		<div id="filter">
+			<button role="button" class="filter_button" onclick="displayFilters()"></button>
+			
+				<div id="filter_list">
+						<label for="genre0">Всі жанри<input name="genre" class="filter_value" type="radio" data-filter_id="0" value="0" id="genre0" onclick="applyFilter()"
+							></label>
+					<c:forEach var="genre" items="${allGenres}">
+						<label for="genre${genre.id}">${genre.name}<input name="genre" class="filter_value" type="radio" data-filter_id="${genre.id}" value="${genre.id}" id="genre${genre.id}" onclick="applyFilter()"
+							></label>
+					</c:forEach>
+				</div>			
 		</div>
-	</div>
-
-
-
 	<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 	<script type="text/javascript" src="js/allbooks.js"></script>

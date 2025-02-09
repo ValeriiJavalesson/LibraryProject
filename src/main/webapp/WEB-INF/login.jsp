@@ -33,6 +33,7 @@
 					<label for="inputPassword" class="form-label">Пароль</label> 
 					<input type="password" class="" id="inputPassword" name="password">
 				</div>
+				<!-- <input type="checkbox" name="remember-me" value="Remember Me"> -->
 				<button name="submit" type="submit" value="submit" class="">Ввійти</button>
 			</form>			
 		</div>

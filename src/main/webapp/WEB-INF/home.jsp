@@ -16,12 +16,10 @@
 </head>
 <body>
 	<jsp:include page="header.jsp"></jsp:include>
-	<div>
-		<div class="searchedword bold h5 ms-4"></div>
-	</div>
+	
 		<div class="container">
 			<div class="d-flex fw-bold justify-content-between mb-2 text-light ">		
-				<a role="button" onclick="getBooksByLetter('#')">#</a>	
+				<a role="button" onclick="getBooksByLetter('0')">#</a>	
 				<a role="button" onclick="getBooksByLetter('А')">А</a> 
 				<a role="button" onclick="getBooksByLetter('Б')">Б</a> 
 				<a role="button" onclick="getBooksByLetter('В')">В</a>
@@ -92,7 +90,8 @@
 				</div>
 				<div class="books_self"	id="product-cards">			
 					<c:forEach var="book" items="${genre.value}">
-					 <div class="book" data-pages="${book.numberOfPages}" data-author="${book.author}" data-name="${book.name}">		
+					 <div class="book" data-pages="${book.numberOfPages}" data-author="${book.author}" data-name="${book.name}"
+					 data-book_id="${book.id}" data-year="${book.year}" data-edition="${book.edition}">		
 						<div class="book_title">
 							<div class="book_author" data-content="${book.author}">${book.author}</div>
 							<div class="book_name" data-content="${book.name}">${book.name}</div>

@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,13 +30,13 @@ import com.pysarivka.library.service.impl.GenreServiceImpl;
 
 @RestController
 public class BookController {
-
+	
 	@Autowired
 	private BookServiceImpl bookService;
 	@Autowired
 	private GenreServiceImpl genreService;
 
-	@GetMapping("/")
+	@RequestMapping("/")
 	public ModelAndView init() {
 		return home();
 	}
@@ -141,18 +140,82 @@ public class BookController {
 		Map<Genre, List<Book>> allgenres = allBooks.stream().filter(b -> !b.getGenre().getId().equals((long) 1))
 				.collect(Collectors.groupingBy(Book::getGenre, Collectors.toList()));
 		allgenres.entrySet().stream()
-		.forEach(entry -> entry.setValue(entry.getValue().stream().limit((long)20).toList()));
+				.forEach(entry -> entry.setValue(entry.getValue().stream().limit((long) 20).toList()));
 		List<Book> randomBooks = new ArrayList<Book>();
 		while (randomBooks.size() < 12) {
 			int randomNumber = (int) (Math.random() * (allBooks.size() - 0));
 			Book book = allBooks.get(randomNumber);
 			if (!randomBooks.contains(book))
 				randomBooks.add(book);
-		}
+		}		
 		model.addObject("allgenres", allgenres);
 		model.addObject("allbooks", randomBooks);
 		model.addObject("username", getUser());
 		return model;
+	}
+
+	@GetMapping("/searchl")
+	public ModelAndView searchByLetter(@RequestParam String word) {
+		ModelAndView model = new ModelAndView("search");
+		model.addObject("searchedword", word);
+		List<Book> allBooks = bookService.findAll();
+		Predicate<Book> nameNumberPredicate = b -> Character.isDigit(b.getName().toLowerCase().charAt(0));
+		Predicate<Book> namePredicate = b -> b.getName().toLowerCase().startsWith(word.toLowerCase());
+		List<Book> filteredBooks;
+		if (word.equals("0")) {
+			model.addObject("searchedword", "#");
+			filteredBooks = allBooks.stream().filter(nameNumberPredicate).collect(Collectors.toList());
+		} else
+			filteredBooks = allBooks.stream().filter(namePredicate).collect(Collectors.toList());
+		List<List<Book>> selfs = getSelfs(filteredBooks);
+
+		model.addObject("username", getUser());
+		model.addObject("selfs", selfs);
+		return model;
+	}
+
+	@GetMapping("/searchw")
+	public ModelAndView searchByWord(@RequestParam String word) {
+		ModelAndView model = new ModelAndView("search");
+		Predicate<Book> namePredicate = b -> String.valueOf(b.getName()).toLowerCase().contains(word.toLowerCase());
+		Predicate<Book> authorPredicate = b -> String.valueOf(b.getAuthor()).toLowerCase().contains(word.toLowerCase());
+		Predicate<Book> notesPredicate = b -> String.valueOf(b.getNotes()).toLowerCase().contains(word.toLowerCase());
+		Predicate<Book> yearPredicate = b -> String.valueOf(b.getYear()).toLowerCase().contains(word.toLowerCase());
+		Predicate<Book> editionPredicate = b -> String.valueOf(b.getEdition()).toLowerCase()
+				.contains(word.toLowerCase());
+		Predicate<Book> langPredicate = b -> String.valueOf(b.getLanguage()).toLowerCase().contains(word.toLowerCase());
+		Predicate<Book> regNumberPredicate = b -> String.valueOf(b.getRegistrationNumber()).toLowerCase()
+				.contains(word.toLowerCase());
+		List<Book> allBooks = bookService.findAll();
+		List<Book> filteredBooks = allBooks.stream().filter(namePredicate.or(authorPredicate).or(notesPredicate)
+				.or(yearPredicate).or(editionPredicate).or(langPredicate).or(regNumberPredicate))
+				.collect(Collectors.toList());
+		List<List<Book>> selfs = getSelfs(filteredBooks);
+		model.addObject("searchedword", word);
+		model.addObject("username", getUser());
+		model.addObject("selfs", selfs);
+		return model;
+	}
+
+	public static List<List<Book>> getSelfs(List<Book> books) {
+		List<List<Book>> selfs = new ArrayList<List<Book>>();
+		books.forEach((book) -> {
+			if (selfs.size() == 0)
+				selfs.add(new ArrayList<Book>());
+			List<Book> lastSelf = selfs.getLast();
+			int sum = lastSelf.stream().mapToInt((b) -> {
+				if (b.getNumberOfPages() < 100)
+					return 100;
+				return b.getNumberOfPages();
+
+			}).sum();
+			if (sum >= 4000)
+				selfs.add(new ArrayList<Book>());
+			lastSelf = selfs.getLast();
+			lastSelf.add(book);
+		});
+
+		return selfs;
 	}
 
 	@GetMapping("/allbooks")
@@ -241,6 +304,7 @@ public class BookController {
 		return model;
 	}
 
+	@Deprecated
 	@GetMapping("/getbooksbyword")
 	public List<Book> getAllBooks(@RequestParam String word) {
 		Predicate<Book> namePredicate = b -> String.valueOf(b.getName()).toLowerCase().contains(word.toLowerCase());
@@ -259,6 +323,7 @@ public class BookController {
 		return filteredBooks;
 	}
 
+	@Deprecated
 	@GetMapping("/getbooksbyfirstletter")
 	public List<Book> getBooksByFirstLetter(@RequestParam String word) {
 		List<Book> allBooks = bookService.findAll();

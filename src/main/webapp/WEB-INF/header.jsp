@@ -1,6 +1,6 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,14 +9,14 @@
 <link rel="stylesheet" href="style/css/header.css">
 </head>
 <body>
-	<nav class="navbar navbar-expand-lg mb-3 sticky-top ">
-		<div class="container-fluid">
+	<nav class="">
+		<div class="nav-container">
 			<div>
-				<a class="navbar-brand" href="home">LIBRARY</a>
+				<a class="brand" href="home" data-content="ПИСАРІВСЬКА">Бібліотека</a>
 				<security:authorize access="hasRole('ROLE_ADMIN')">
 					<a class="btn btn-primary" href="books">Всі книги</a>
 					<a class="btn btn-primary" href="newbook?id=0">Додати нову книгу</a>
-					<a class="btn btn-primary" href="newgenre?id=0">Додати новий жанр</a>
+					<a class="btn btn-primary" href="addgenre">Жанри</a>
 				</security:authorize>
 			</div>
 

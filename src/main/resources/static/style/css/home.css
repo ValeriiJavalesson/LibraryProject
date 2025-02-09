@@ -1,25 +1,3 @@
-@font-face {
-	font-family: "Jura";
-	src: url("../fonts/Jura/Jura-VariableFont_wght.ttf");
-}
-
-@font-face {
-	font-family: "Cormorant_Infant";
-	src: url("../fonts/Cormorant_Infant/CormorantInfant-Regular.ttf");
-}
-
-@font-face {
-	font-family: "Cormorant_Infant";
-	src: url("../fonts/Cormorant_Infant/CormorantInfant-Bold.ttf");
-	font-weight: bold;
-}
-
-@font-face {
-	font-family: "Cormorant_Infant";
-	src: url("../fonts/Cormorant_Infant/CormorantInfant-Italic.ttf");
-	font-weight: italic;
-}
-
 body {
 	background-image: url("../images/back.jpg");
 	background-size: cover;
@@ -55,6 +33,7 @@ body {
 	border-spacing: -15px;
 	box-shadow: inset 0px 0 0px 1px black;
 	font-size: 1.6em;
+	margin-right: -3em;
 }
 
 .books_self {
@@ -66,6 +45,8 @@ body {
 	width: 90%;
 	position: relative;
 	height: 22rem;
+	padding-left: 5em;
+	padding-right: 5em;
 }
 
 .genre_self:after {
@@ -89,6 +70,8 @@ body {
 	bottom: 0;
 	height: 100%;
 	width: 30%;
+	display: flex;
+	justify-content: flex-end;
 }
 
 .more_books a {
@@ -169,34 +152,36 @@ body {
 	align-self: center;
 	margin-bottom: 5%;
 	position: relative;
+	overflow: hidden;
 }
 
 .book:before {
-	content: attr(data-author) '\A' attr(data-name);
-    white-space: pre;
-    opacity: 0;
-    display: block;
-    position: absolute;
-    top: -105px;
-    z-index: 999;
-    height: 8em;
-    font-size: 0.8em;
-    width: 16em;
-    font-weight: bold;
-    text-align: center;
-    text-wrap: wrap;
-    padding: 5px;
-    align-content: center;
-    overflow: hidden;
-    border-radius: 14px;
-    transition: opacity 0.8s ease;
-    z-index: -5;
-    background-image: url(../images/comment.png);
-    background-position: center;
-    background-size: 100%;
-    background-repeat: no-repeat;
-    padding-bottom: 2em;
-    font-family: 'Cormorant_Infant';
+	content: attr(data-author) '\A' attr(data-name) '\A' attr(data-edition)
+		', ' attr(data-year);
+	white-space: pre;
+	opacity: 0;
+	display: block;
+	position: absolute;
+	top: -128px;
+	z-index: 999;
+	height: 8em;
+	font-size: 1em;
+	width: 16em;
+	font-weight: bold;
+	text-align: center;
+	text-wrap: wrap;
+	padding: 5px;
+	align-content: center;
+	overflow: hidden;
+	border-radius: 14px;
+	transition: opacity 0.8s ease;
+	z-index: -5;
+	background-image: url(../images/comment.png);
+	background-position: center;
+	background-size: 100%;
+	background-repeat: no-repeat;
+	padding-bottom: 2em;
+	font-family: 'Bona';
 }
 
 .book:hover:before {
@@ -222,6 +207,7 @@ body {
 	height: 67%;
 	text-align: center;
 	margin-bottom: 3%;
+	overflow: hidden;
 }
 
 .book_year {

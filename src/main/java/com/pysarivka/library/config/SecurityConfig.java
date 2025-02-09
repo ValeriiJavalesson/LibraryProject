@@ -7,6 +7,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,7 +20,7 @@ import com.pysarivka.library.security.CustomUserDetailService;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-public class SecurityConfig {
+public class SecurityConfig extends WebSecurityConfiguration{
 
 	@Bean
 	public UserDetailsService userDetailsService() {
@@ -32,8 +33,10 @@ public class SecurityConfig {
 				.authorizeHttpRequests(
 						auth -> auth.requestMatchers("/cabinet/**").authenticated().requestMatchers("/**").permitAll())
 				.formLogin(formlogin -> formlogin.loginPage("/login").defaultSuccessUrl("/books", true)
-						.failureUrl("/login?error=true").permitAll())
+						.failureUrl("/login?error=true").permitAll())				
 				.logout((logout) -> logout.logoutSuccessHandler(logoutSuccessHandler()));
+//				.rememberMe((remember) -> remember
+//						.rememberMeServices(rememberMeServices(userDetailsService)).alwaysRemember(true));
 		return http.build();
 	}
 	
@@ -54,4 +57,11 @@ public class SecurityConfig {
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+//	@Bean
+//	public RememberMeServices rememberMeServices(UserDetailsService userDetailsService) {
+//		RememberMeTokenAlgorithm encodingAlgorithm = RememberMeTokenAlgorithm.SHA256;
+//		TokenBasedRememberMeServices rememberMe = new TokenBasedRememberMeServices("key", userDetailsService, encodingAlgorithm);
+//		rememberMe.setMatchingAlgorithm(RememberMeTokenAlgorithm.MD5);
+//		return rememberMe;
+//	}
 }

@@ -1,8 +1,6 @@
 package com.pysarivka.library.controller;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -29,6 +27,14 @@ public class GenreController {
 	@Autowired
 	private GenreServiceImpl genreService;
 
+	@RequestMapping("/addgenre")
+	public ModelAndView addgenre() {
+		ModelAndView model = new ModelAndView("addgenre");
+		List<Genre> allGenres = genreService.findAll();
+		model.addObject("allgenres", allGenres);
+		return model;
+	}
+
 	@RequestMapping("/newgenre")
 	public ModelAndView editgenre(@RequestParam("id") Long id) {
 		ModelAndView model = new ModelAndView("newgenre");
@@ -46,10 +52,9 @@ public class GenreController {
 
 	@PostMapping("/save_genre")
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
-	public String saveBook(@ModelAttribute("genreform") Genre genre) {
-		Genre savedGenre = null;
-		savedGenre = genreService.save(genre);
-		return savedGenre != null ? "books" : "newgenre?id=0";
+	public String saveBook(@ModelAttribute Genre genre) {
+		genreService.save(genre);
+		return "addgenre";
 	}
 
 	@GetMapping("/all_genres")
@@ -69,17 +74,34 @@ public class GenreController {
 					.collect(Collectors.toList());
 			List<Book> sortedBooks = books.stream().sorted((o1, o2) -> o1.getYear().compareTo(o2.getYear()))
 					.collect(Collectors.toList());
+			List<List<Book>> selfs = BookController.getSelfs(sortedBooks);
 			Genre genre = books.getFirst().getGenre();
+
 			model.addObject("genre", genre);
-			model.addObject("books", sortedBooks);
+			model.addObject("selfs", selfs);
 		} else {
 			List<Book> sortedBooks = allBooks.stream().sorted((o1, o2) -> o1.getYear().compareTo(o2.getYear()))
 					.collect(Collectors.toList());
-			model.addObject("books", sortedBooks);
+			List<List<Book>> selfs = BookController.getSelfs(sortedBooks);
+			model.addObject("selfs", selfs);
 			model.addObject("genre", new Genre("Усі жанри"));
 		}
 
 		return model;
+	}
+
+	@PostMapping("/delete_genre")
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+	public String deleteGenre(@RequestParam("id") Long genreId) {
+		Genre emptyGenre = null;
+		Optional<Genre> optionalGenre = genreService.findById((long) 1);
+		if (optionalGenre.isPresent())
+			emptyGenre = optionalGenre.get();
+		Genre firstGenre = emptyGenre;
+		bookService.findAll().stream().filter(b -> b.getGenre().getId().equals(genreId))
+				.forEach(b -> b.setGenre(firstGenre));
+		genreService.deleteById(genreId);
+		return "addgenre";
 	}
 
 }
