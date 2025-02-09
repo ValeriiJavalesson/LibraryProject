@@ -8,15 +8,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
 @Table
 @Data
-public class Book implements Serializable{
-	
+public class Genre implements Serializable{
+
 	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -24,28 +23,13 @@ public class Book implements Serializable{
 	@NonNull
 	@Column
 	private String name;
-	@Column
-	private String author;
-	@Column
-	private String registrationNumber;
-	@Column
-	private String edition;
-	@Column
-	private Integer numberOfPages;
-	@Column
-	private Double price;
-	@Column
-	private Integer year;
-	@Column
-	private String language;
-	@Column
-	private String notes;
-	@Column
-	private String currency;
-	@Column
-	private Boolean childhood;
-	@Column
-	private Boolean closedSection;
-	@ManyToOne
-	private Genre genre;
+	
+	public Genre() {};
+	
+	public Genre(String name) {
+		this.name = name;
+	}
+	
+	
+
 }

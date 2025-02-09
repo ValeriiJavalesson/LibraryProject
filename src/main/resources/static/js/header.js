@@ -2,8 +2,11 @@ let books = null;
 let filteredBooks = null;
 let searchedword = "";
 let username = "";
+let genreId = '';
 $(document).ready(function() {
 	username = $('input#username').val();
+	genreId = $('input#genreId').val();
+
 });
 
 function login() {
@@ -11,8 +14,6 @@ function login() {
 }
 
 function logout() {
-	//$.get('logout', document.URL);
-	//	window.location.reload;
 	window.location.href = "logout";
 }
 
@@ -31,7 +32,8 @@ function findBook() {
 	var word = $("input#search").val();
 	word = word.trim();
 	if (word.length > 2) {
-		$.get("getbooksbyword", { word: word }, function(data) {
+		window.location = `searchw?word=${word}`;
+		/*$.get("getbooksbyword", { word: word }, function(data) {
 			if (data !== '') {
 				filteredBooks = data;
 				searchedword = word;
@@ -39,20 +41,25 @@ function findBook() {
 		}).done(function() {
 			showResults();
 			$("input#search").val("");
-		});
+		});*/
 	}
 }
 function findBookAdmin() {
+	let sectionsUrl = '';
+	for (let i = 0; i < sections.length; i++) {
+		sectionsUrl += '&sections=' + sections[i];
+	}
+	if (sections.length == 0) sectionsUrl = '&sections=';
 	var word = $("input#search").val();
 	word = word.trim();
 	if (word.length > 2) {
-		window.location = `allbooks?page=1&word=${word}`
+		window.location = `allbooks?page=1&word=${word}&genreId=` + genreId + sectionsUrl;
 	}
 
 }
 
 function getBooks(word) {
-	searchedword = '"' + word + '"';
+	/*searchedword = '"' + word + '"';
 	if (books == null) {
 		$.get("getbooksbyword", { word: word }, function(data) {
 			if (data !== '') {
@@ -61,11 +68,11 @@ function getBooks(word) {
 			}
 		});
 	}
-
+	window.location = `searchw?word=${word}`;*/
 };
 
 function getBooksByLetter(word) {
-	searchedword = '"' + word + '"';
+	/*searchedword = '"' + word + '"';
 	if (books == null) {
 		$.get("getbooksbyfirstletter", { word: word }, function(data) {
 			if (data !== '') {
@@ -77,7 +84,8 @@ function getBooksByLetter(word) {
 			showResults();
 			$("input#search").val("");
 		});
-	}
+	}*/
+	window.location = `searchl?word=${word}`;
 
 };
 
@@ -121,12 +129,12 @@ function getbook(id) {
 }
 
 function topFunction() {
-  document.body.scrollTop = 0; 
-  document.documentElement.scrollTop = 0; 
+	document.body.scrollTop = 0;
+	document.documentElement.scrollTop = 0;
 }
 
 function buttomFunction() {
-  window.scrollTo(0, document.body.scrollHeight);
+	window.scrollTo(0, document.body.scrollHeight);
 }
 
 

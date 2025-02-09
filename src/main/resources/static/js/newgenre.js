@@ -1,9 +1,9 @@
 function checkForm() {
-	const form = $("#bookform")[0];
+	const form = $("#genreform")[0];
 	var formData = new FormData(form);
 	$.ajax({
 		type: "POST",
-		url: 'save_book',
+		url: 'save_genre',
 		data: formData,
 		contentType: false,
 		processData: false,
@@ -12,8 +12,3 @@ function checkForm() {
 		}
 	})
 }
-
-$(document).ready(function() {
-	let genreId = $('select[name="genre"]').data('genre');
-	$('select[name="genre"]').val(genreId);
-});

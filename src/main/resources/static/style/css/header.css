@@ -1,5 +1,56 @@
+@import url("../css/fonts.css");
+
+*{
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+}
+
 nav {
 	background-color: rgb(170, 174, 218) !important;
+	background-color: #FF9800 !important;
+	box-shadow: 1px 5px 20px black;
+	position: -webkit-sticky;
+	position: sticky;
+	top: 0;
+	z-index: 1020;
+	margin-bottom: 1rem !important;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.5rem;
+}
+
+nav .nav-container {
+	display: flex;
+	justify-content: space-between;
+	flex-direction: row;
+	align-items: center;
+	width: 100%;
+}
+nav .brand{
+	font-size: 1.7rem;
+    color: black;
+    text-decoration: none;
+    font-family: 'Bona';
+    position: relative;
+}
+nav .brand:before{
+	position: absolute;
+	content: attr(data-content);
+	top: -6px;
+	right: 6px;
+	font-size: 0.5em;
+	
+}
+
+nav .search_line::before {
+	content: attr(data-before);
+	position: relative;
+	top: 5px;
+	left: 44px;
+	font-size: 18px;
 }
 
 .book-image {
@@ -22,19 +73,19 @@ nav {
 	color: white;
 	cursor: pointer;
 	border-radius: 33px;
-	font-size: 25px;
-    padding-bottom: 12px;
-    width: 2rem;
-    aspect-ratio: 1 / 1;
-    overflow: hidden;
-    line-height: 25px;
-    text-align: center;
+	font-size: 30px;
+	padding-bottom: 5px;
+	width: 2.6rem;
+	aspect-ratio: 1/1;
+	overflow: hidden;
+	line-height: 30px;
+	text-align: center;
 }
 
-#toButtomButton{
-	bottom: 4rem;
+#toButtomButton {
+	bottom: 3.2rem;
 }
 
 #toTopButton:hover, #toButtomButton:hover {
 	background-color: #0091ff;
-}
+} /*# sourceMappingURL=header.css.map */
