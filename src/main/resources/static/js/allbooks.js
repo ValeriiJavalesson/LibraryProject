@@ -1,5 +1,3 @@
-/*let page = 1;
-let word = "";*/
 let allGenres = '';
 let sections = [];
 $(document).ready(function() {
@@ -68,7 +66,13 @@ function print(id) {
 	var table = content.querySelector('.allbooks_table');
 	$(tableHead).insertBefore(table);
 	tableHead = content.querySelector('#tableHead');
+	
 	$(table).find('tr').each(function() {
+		$(this).find('th').each(function() {
+			let text = $(this).text();
+			$(this).text(text.replace(/[▲▼]/g, '').trim());
+			$(this).removeAttr('onclick');
+		});
 		$(this).children("th:eq(12)").remove();
 		$(this).children("th:eq(11)").remove();
 		$(this).children("th:eq(10)").remove();
@@ -93,7 +97,8 @@ function print(id) {
 		"border": "solid 1px #000000",
 		"word-break": "break-word",
 		"padding": "3px",
-		"width": "min-content"
+		"width": "min-content",
+		"cursor": "default"
 	});
 	$(table).find('colgroup').children().remove();
 	let colgroup_content = '<col width="9%">';
@@ -246,7 +251,6 @@ function applyFilter() {
 	navigateWithFilter(word);
 }
 
-// Функція очищення пошукового слова
 function clearSearchedWord() {
 	navigateWithFilter('');
 }
@@ -270,8 +274,8 @@ function navigateWithFilter(searchWord) {
 		page: page,
 		word: searchWord,
 		genreId: genreId,
-		sort: currentSortField, // Зберігаємо поточне поле сортування
-		dir: currentSortDir     // Зберігаємо поточний напрямок сортування
+		sort: currentSortField, 
+		dir: currentSortDir     
 	});
 
 	if (sections && sections.length > 0) {

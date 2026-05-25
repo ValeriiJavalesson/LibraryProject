@@ -1,8 +1,10 @@
 package com.pysarivka.library.controller;
 
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -31,7 +33,7 @@ import com.pysarivka.library.service.impl.GenreServiceImpl;
 
 @RestController
 public class BookController {
-	
+
 	@Autowired
 	private BookServiceImpl bookService;
 	@Autowired
@@ -152,7 +154,7 @@ public class BookController {
 			Book book = allBooks.get(randomNumber);
 			if (!randomBooks.contains(book))
 				randomBooks.add(book);
-		}		
+		}
 		model.addObject("allgenres", allgenres);
 		model.addObject("allbooks", randomBooks);
 		model.addObject("username", getUser());
@@ -298,128 +300,132 @@ public class BookController {
 //		return model;
 //	}
 	@GetMapping("/allbooks")
-	public ModelAndView allbooks(
-	        @RequestParam Integer page, 
-	        @RequestParam String word, 
-	        @RequestParam int genreId,
-	        @RequestParam(required = false, defaultValue = "") String[] sections, // Захист від null/порожнього значення
-	        @RequestParam(defaultValue = "id") String sort,                        // Новий параметр: поле для сортування
-	        @RequestParam(defaultValue = "asc") String dir) {                      // Новий параметр: напрямок (asc/desc)
-	    
-	    List<Genre> allGenres = genreService.findAll();
-	    ModelAndView model = new ModelAndView("allbooks");
-	    List<Book> allBooks = getAllBooks(word);
-	    List<Book> filteredBooks = new ArrayList<>();
+	public ModelAndView allbooks(@RequestParam Integer page, @RequestParam String word, @RequestParam int genreId,
+			@RequestParam(required = false, defaultValue = "") String[] sections, // Захист від null/порожнього значення
+			@RequestParam(defaultValue = "id") String sort, // Новий параметр: поле для сортування
+			@RequestParam(defaultValue = "asc") String dir) { // Новий параметр: напрямок (asc/desc)
 
-	    // 1. Фільтрація за жанром
-	    if (genreId != 0) {
-	        Genre genre = allGenres.stream().filter(g -> g.getId().equals((long) genreId)).findFirst().orElse(null);
-	        if (genre != null) {
-	            filteredBooks = allBooks.stream().filter(b -> b.getGenre().getId().equals(genre.getId()))
-	                    .collect(Collectors.toList());
-	            model.addObject("genreId", genre.getId());
-	        } else {
-	            model.addObject("genreId", 0);
-	            filteredBooks = allBooks;
-	        }
-	    } else {
-	        model.addObject("genreId", 0);
-	        filteredBooks = allBooks;
-	    }
+		List<Genre> allGenres = genreService.findAll();
+		ModelAndView model = new ModelAndView("allbooks");
+		List<Book> allBooks = getAllBooks(word);
+		List<Book> filteredBooks = new ArrayList<>();
 
-	    // 2. Фільтрація за секціями
-	    if (sections != null && sections.length > 0) {
-	        for (int i = 0; i < sections.length; i++) {
-	            switch (sections[i]) {
-	                case "childhood": {
-	                    filteredBooks = filteredBooks.stream().filter(b -> b.getChildhood() != null && b.getChildhood())
-	                            .collect(Collectors.toList());
-	                    break;
-	                }
-	                case "closedSection": {
-	                    filteredBooks = filteredBooks.stream()
-	                            .filter(b -> b.getClosedSection() != null && b.getClosedSection())
-	                            .collect(Collectors.toList());
-	                    break;
-	                }
-	            }
-	        }
-	    }
+		// 1. Фільтрація за жанром
+		if (genreId != 0) {
+			Genre genre = allGenres.stream().filter(g -> g.getId().equals((long) genreId)).findFirst().orElse(null);
+			if (genre != null) {
+				filteredBooks = allBooks.stream().filter(b -> b.getGenre().getId().equals(genre.getId()))
+						.collect(Collectors.toList());
+				model.addObject("genreId", genre.getId());
+			} else {
+				model.addObject("genreId", 0);
+				filteredBooks = allBooks;
+			}
+		} else {
+			model.addObject("genreId", 0);
+			filteredBooks = allBooks;
+		}
 
-	    // 3. ДИНАМІЧНЕ СОРТУВАННЯ (замість статичного .getYear())
-	    Comparator<Book> bookComparator = getBookComparator(sort);
-	    if ("desc".equalsIgnoreCase(dir)) {
-	        bookComparator = bookComparator.reversed();
-	    }
-	    
-	    List<Book> sortedBooks = filteredBooks.stream()
-	            .sorted(bookComparator)
-	            .collect(Collectors.toList());
+		// 2. Фільтрація за секціями
+		if (sections != null && sections.length > 0) {
+			for (int i = 0; i < sections.length; i++) {
+				switch (sections[i]) {
+				case "childhood": {
+					filteredBooks = filteredBooks.stream().filter(b -> b.getChildhood() != null && b.getChildhood())
+							.collect(Collectors.toList());
+					break;
+				}
+				case "closedSection": {
+					filteredBooks = filteredBooks.stream()
+							.filter(b -> b.getClosedSection() != null && b.getClosedSection())
+							.collect(Collectors.toList());
+					break;
+				}
+				}
+			}
+		}
 
-	    // 4. Пагінація
-	    int booksInPage = sortedBooks.size() > 500 ? 500 : sortedBooks.size();
-	    double numberOfPages = Math.ceil((double) sortedBooks.size() / (double) (booksInPage == 0 ? 1 : booksInPage));
-	    List<Book> sublist;
-	    if (page != null && page > 0 && page <= numberOfPages) {
-	        int startIndex = booksInPage * (page - 1);
-	        int endIndex = booksInPage * (page - 1) + booksInPage;
-	        if (endIndex > sortedBooks.size())
-	            endIndex = sortedBooks.size();
-	        sublist = sortedBooks.subList(startIndex, endIndex);
-	        model.addObject("page", page);
-	    } else {
-	        sublist = sortedBooks.isEmpty() ? new ArrayList<>() : sortedBooks.subList(0, booksInPage);
-	        model.addObject("page", 1);
-	    }
-	    
-	    // Передаємо нові параметри назад у View, щоб JS-скрипт знав поточний стан
-	    model.addObject("sortField", sort);
-	    model.addObject("sortDir", dir);
+		// 3. ДИНАМІЧНЕ СОРТУВАННЯ (замість статичного .getYear())
+		Comparator<Book> bookComparator = getBookComparator(sort);
+		if ("desc".equalsIgnoreCase(dir)) {
+			bookComparator = bookComparator.reversed();
+		}
 
-	    model.addObject("word", word);
-	    model.addObject("booksOnPage", booksInPage);
-	    model.addObject("numberOfPages", numberOfPages);
-	    model.addObject("allbooks", sublist);
-	    model.addObject("username", getUser());
-	    model.addObject("numberOfAllBooks", sortedBooks.size());
-	    model.addObject("allGenres", allGenres);
-	    model.addObject("sections", sections);
+		List<Book> sortedBooks = filteredBooks.stream().sorted(bookComparator).collect(Collectors.toList());
 
-	    return model;
+		// 4. Пагінація
+		int booksInPage = sortedBooks.size() > 200 ? 200 : sortedBooks.size();
+		double numberOfPages = Math.ceil((double) sortedBooks.size() / (double) (booksInPage == 0 ? 1 : booksInPage));
+		List<Book> sublist;
+		if (page != null && page > 0 && page <= numberOfPages) {
+			int startIndex = booksInPage * (page - 1);
+			int endIndex = booksInPage * (page - 1) + booksInPage;
+			if (endIndex > sortedBooks.size())
+				endIndex = sortedBooks.size();
+			sublist = sortedBooks.subList(startIndex, endIndex);
+			model.addObject("page", page);
+		} else {
+			sublist = sortedBooks.isEmpty() ? new ArrayList<>() : sortedBooks.subList(0, booksInPage);
+			model.addObject("page", 1);
+		}
+
+		// Передаємо нові параметри назад у View, щоб JS-скрипт знав поточний стан
+		model.addObject("sortField", sort);
+		model.addObject("sortDir", dir);
+		model.addObject("word", word);
+		model.addObject("booksOnPage", booksInPage);
+		model.addObject("numberOfPages", numberOfPages);
+		model.addObject("allbooks", sublist);
+		model.addObject("username", getUser());
+		model.addObject("numberOfAllBooks", sortedBooks.size());
+		model.addObject("allGenres", allGenres);
+		model.addObject("sections", sections);
+
+		return model;
 	}
 
 	private Comparator<Book> getBookComparator(String sortField) {
-	    switch (sortField) {
-	        case "name":
-	            return Comparator.comparing(b -> b.getName() != null ? b.getName().toLowerCase() : "");
-	        case "author":
-	            return Comparator.comparing(b -> b.getAuthor() != null ? b.getAuthor().toLowerCase() : "");
-	        case "registrationNumber":
-	            return Comparator.comparing(b -> b.getRegistrationNumber() != null ? b.getRegistrationNumber().toLowerCase() : "");
-	        case "edition":
-	            return Comparator.comparing(b -> b.getEdition() != null ? b.getEdition().toLowerCase() : "");
-	        case "language":
-	            return Comparator.comparing(b -> b.getLanguage() != null ? b.getLanguage().toLowerCase() : "");
-	        case "notes":
-	            return Comparator.comparing(b -> b.getNotes() != null ? b.getNotes().toLowerCase() : "");
-	        case "numberOfPages":
-	            return Comparator.comparing(Book::getNumberOfPages, Comparator.nullsLast(Comparator.naturalOrder()));
-	        case "price":
-	            return Comparator.comparing(Book::getPrice, Comparator.nullsLast(Comparator.naturalOrder()));
-	        case "year":
-	            return Comparator.comparing(Book::getYear, Comparator.nullsLast(Comparator.naturalOrder()));	            	            
-	        case "genre":
-	            return Comparator.comparing(
-	                b -> b.getGenre() != null && b.getGenre().getName() != null ? b.getGenre().getName().toLowerCase() : "", 
-	                Comparator.nullsLast(String::compareTo)
-	            );	            
-	        case "id":
-	        default:
-	            return Comparator.comparing(Book::getId, Comparator.nullsLast(Comparator.naturalOrder()));
-	    }
+		Collator ukrainianCollator = Collator.getInstance(Locale.of("uk", "UA"));
+		ukrainianCollator.setStrength(Collator.PRIMARY);
+		switch (sortField) {
+
+		case "name":
+			return (b1, b2) -> ukrainianCollator.compare(b1.getName() != null ? b1.getName() : "",
+					b2.getName() != null ? b2.getName() : "");
+		case "author":
+			return (b1, b2) -> ukrainianCollator.compare(b1.getAuthor() != null ? b1.getAuthor() : "",
+					b2.getAuthor() != null ? b2.getAuthor() : "");
+		case "registrationNumber":
+			return (b1, b2) -> ukrainianCollator.compare(
+					b1.getRegistrationNumber() != null ? b1.getRegistrationNumber() : "",
+					b2.getRegistrationNumber() != null ? b2.getRegistrationNumber() : "");
+		case "edition":
+			return (b1, b2) -> ukrainianCollator.compare(b1.getEdition() != null ? b1.getEdition() : "",
+					b2.getEdition() != null ? b2.getEdition() : "");
+		case "language":
+			return (b1, b2) -> ukrainianCollator.compare(b1.getLanguage() != null ? b1.getLanguage() : "",
+					b2.getLanguage() != null ? b2.getLanguage() : "");
+		case "notes":
+			return (b1, b2) -> ukrainianCollator.compare(b1.getNotes() != null ? b1.getNotes() : "",
+					b2.getNotes() != null ? b2.getNotes() : "");
+
+		case "numberOfPages":
+			return Comparator.comparing(Book::getNumberOfPages, Comparator.nullsLast(Comparator.naturalOrder()));
+		case "price":
+			return Comparator.comparing(Book::getPrice, Comparator.nullsLast(Comparator.naturalOrder()));
+		case "year":
+			return Comparator.comparing(Book::getYear, Comparator.nullsLast(Comparator.naturalOrder()));
+		case "genre":
+			return (b1, b2) -> {
+				String g1 = (b1.getGenre() != null && b1.getGenre().getName() != null) ? b1.getGenre().getName() : "";
+				String g2 = (b2.getGenre() != null && b2.getGenre().getName() != null) ? b2.getGenre().getName() : "";
+				return ukrainianCollator.compare(g1, g2);
+			};
+		case "id":
+		default:
+			return Comparator.comparing(Book::getId, Comparator.nullsLast(Comparator.naturalOrder()));
+		}
 	}
-
-
 
 	@GetMapping("/adminsearch")
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
