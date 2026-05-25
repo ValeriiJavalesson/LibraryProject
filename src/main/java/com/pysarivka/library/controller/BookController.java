@@ -1,6 +1,7 @@
 package com.pysarivka.library.controller;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -38,13 +39,17 @@ public class BookController {
 
 	@RequestMapping("/")
 	public ModelAndView init() {
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if (principal instanceof UserDetails) {
+			return books();
+		}
 		return home();
 	}
 
 	@RequestMapping("/books")
 	public ModelAndView books() {
 		String[] sections = {};
-		return allbooks((int) 1, "", (int) 0, sections);
+		return allbooks((int) 1, "", (int) 0, sections, "year", "asc");
 	}
 
 	@RequestMapping("/login")
@@ -140,7 +145,7 @@ public class BookController {
 		Map<Genre, List<Book>> allgenres = allBooks.stream().filter(b -> !b.getGenre().getId().equals((long) 1))
 				.collect(Collectors.groupingBy(Book::getGenre, Collectors.toList()));
 		allgenres.entrySet().stream()
-				.forEach(entry -> entry.setValue(entry.getValue().stream().limit((long) 20).toList()));
+				.forEach(entry -> entry.setValue(entry.getValue().stream().limit((long) 12).toList()));
 		List<Book> randomBooks = new ArrayList<Book>();
 		while (randomBooks.size() < 12) {
 			int randomNumber = (int) (Math.random() * (allBooks.size() - 0));
@@ -218,77 +223,203 @@ public class BookController {
 		return selfs;
 	}
 
+//	@GetMapping("/allbooks")
+//	public ModelAndView allbooks(
+//			@RequestParam Integer page, 
+//			@RequestParam String word, 
+//			@RequestParam int genreId,
+//			@RequestParam String[] sections) {
+//		List<Genre> allGenres = genreService.findAll();
+//		ModelAndView model = new ModelAndView("allbooks");
+//		List<Book> allBooks = null;
+//		allBooks = getAllBooks(word);
+//		List<Book> filteredBooks = new ArrayList<Book>();
+//
+//		if (genreId != 0) {
+//			Genre genre = allGenres.stream().filter(g -> g.getId().equals((long) genreId)).findFirst().orElse(null);
+//			if (genre != null) {
+//				filteredBooks = allBooks.stream().filter(b -> b.getGenre().getId().equals(genre.getId()))
+//						.collect(Collectors.toList());
+//				model.addObject("genreId", genre.getId());
+//			} else {
+//				model.addObject("genreId", 0);
+//				filteredBooks = allBooks;
+//			}
+//		} else {
+//			model.addObject("genreId", 0);
+//			filteredBooks = allBooks;
+//		}
+//
+//		if (sections.length > 0) {
+//			for (int i = 0; i < sections.length; i++) {
+//				switch (sections[i]) {
+//				case "childhood": {
+//					filteredBooks = filteredBooks.stream().filter(b -> b.getChildhood() != null && b.getChildhood())
+//							.collect(Collectors.toList());
+//					break;
+//				}
+//				case "closedSection": {
+//					filteredBooks = filteredBooks.stream()
+//							.filter(b -> b.getClosedSection() != null && b.getClosedSection())
+//							.collect(Collectors.toList());
+//					break;
+//				}
+//
+//				}
+//			}
+//		}
+//
+//		List<Book> sortedBooks = filteredBooks.stream().sorted((o1, o2) -> o1.getYear().compareTo(o2.getYear()))
+//				.collect(Collectors.toList());
+//		int booksInPage = sortedBooks.size() > 500 ? 500 : sortedBooks.size();
+//		double numberOfPages = Math.ceil((double) sortedBooks.size() / (double) booksInPage);
+//		List<Book> sublist;
+//		if (page != null && page > 0 && page <= numberOfPages) {
+//			int startIndex = booksInPage * (page - 1);
+//			int endIndex = booksInPage * (page - 1) + booksInPage;
+//			if (endIndex > sortedBooks.size())
+//				endIndex = sortedBooks.size();
+//			sublist = sortedBooks.subList(startIndex, endIndex);
+//			model.addObject("page", page);
+//
+//		} else {
+//			sublist = sortedBooks.subList(0, booksInPage);
+//			model.addObject("page", 1);
+//		}
+//		model.addObject("word", word);
+//		model.addObject("booksOnPage", booksInPage);
+//		model.addObject("numberOfPages", numberOfPages);
+//		model.addObject("allbooks", sublist);
+//		model.addObject("username", getUser());
+//		model.addObject("numberOfAllBooks", sortedBooks.size());
+//		model.addObject("allGenres", allGenres);
+//		model.addObject("sections", sections);
+//
+//		return model;
+//	}
 	@GetMapping("/allbooks")
-	public ModelAndView allbooks(@RequestParam Integer page, @RequestParam String word, @RequestParam int genreId,
-			@RequestParam String[] sections) {
-		List<Genre> allGenres = genreService.findAll();
-		ModelAndView model = new ModelAndView("allbooks");
-		List<Book> allBooks = null;
-		allBooks = getAllBooks(word);
-		List<Book> filteredBooks = new ArrayList<Book>();
+	public ModelAndView allbooks(
+	        @RequestParam Integer page, 
+	        @RequestParam String word, 
+	        @RequestParam int genreId,
+	        @RequestParam(required = false, defaultValue = "") String[] sections, // Захист від null/порожнього значення
+	        @RequestParam(defaultValue = "id") String sort,                        // Новий параметр: поле для сортування
+	        @RequestParam(defaultValue = "asc") String dir) {                      // Новий параметр: напрямок (asc/desc)
+	    
+	    List<Genre> allGenres = genreService.findAll();
+	    ModelAndView model = new ModelAndView("allbooks");
+	    List<Book> allBooks = getAllBooks(word);
+	    List<Book> filteredBooks = new ArrayList<>();
 
-		if (genreId != 0) {
-			Genre genre = allGenres.stream().filter(g -> g.getId().equals((long) genreId)).findFirst().orElse(null);
-			if (genre != null) {
-				filteredBooks = allBooks.stream().filter(b -> b.getGenre().getId().equals(genre.getId()))
-						.collect(Collectors.toList());
-				model.addObject("genreId", genre.getId());
-			} else {
-				model.addObject("genreId", 0);
-				filteredBooks = allBooks;
-			}
-		} else {
-			model.addObject("genreId", 0);
-			filteredBooks = allBooks;
-		}
+	    // 1. Фільтрація за жанром
+	    if (genreId != 0) {
+	        Genre genre = allGenres.stream().filter(g -> g.getId().equals((long) genreId)).findFirst().orElse(null);
+	        if (genre != null) {
+	            filteredBooks = allBooks.stream().filter(b -> b.getGenre().getId().equals(genre.getId()))
+	                    .collect(Collectors.toList());
+	            model.addObject("genreId", genre.getId());
+	        } else {
+	            model.addObject("genreId", 0);
+	            filteredBooks = allBooks;
+	        }
+	    } else {
+	        model.addObject("genreId", 0);
+	        filteredBooks = allBooks;
+	    }
 
-		if (sections.length > 0) {
-			for (int i = 0; i < sections.length; i++) {
-				switch (sections[i]) {
-				case "childhood": {
-					filteredBooks = filteredBooks.stream().filter(b -> b.getChildhood() != null && b.getChildhood())
-							.collect(Collectors.toList());
-					break;
-				}
-				case "closedSection": {
-					filteredBooks = filteredBooks.stream()
-							.filter(b -> b.getClosedSection() != null && b.getClosedSection())
-							.collect(Collectors.toList());
-					break;
-				}
+	    // 2. Фільтрація за секціями
+	    if (sections != null && sections.length > 0) {
+	        for (int i = 0; i < sections.length; i++) {
+	            switch (sections[i]) {
+	                case "childhood": {
+	                    filteredBooks = filteredBooks.stream().filter(b -> b.getChildhood() != null && b.getChildhood())
+	                            .collect(Collectors.toList());
+	                    break;
+	                }
+	                case "closedSection": {
+	                    filteredBooks = filteredBooks.stream()
+	                            .filter(b -> b.getClosedSection() != null && b.getClosedSection())
+	                            .collect(Collectors.toList());
+	                    break;
+	                }
+	            }
+	        }
+	    }
 
-				}
-			}
-		}
+	    // 3. ДИНАМІЧНЕ СОРТУВАННЯ (замість статичного .getYear())
+	    Comparator<Book> bookComparator = getBookComparator(sort);
+	    if ("desc".equalsIgnoreCase(dir)) {
+	        bookComparator = bookComparator.reversed();
+	    }
+	    
+	    List<Book> sortedBooks = filteredBooks.stream()
+	            .sorted(bookComparator)
+	            .collect(Collectors.toList());
 
-		List<Book> sortedBooks = filteredBooks.stream().sorted((o1, o2) -> o1.getYear().compareTo(o2.getYear()))
-				.collect(Collectors.toList());
-		int booksInPage = sortedBooks.size() > 500 ? 500 : sortedBooks.size();
-		double numberOfPages = Math.ceil((double) sortedBooks.size() / (double) booksInPage);
-		List<Book> sublist;
-		if (page != null && page > 0 && page <= numberOfPages) {
-			int startIndex = booksInPage * (page - 1);
-			int endIndex = booksInPage * (page - 1) + booksInPage;
-			if (endIndex > sortedBooks.size())
-				endIndex = sortedBooks.size();
-			sublist = sortedBooks.subList(startIndex, endIndex);
-			model.addObject("page", page);
+	    // 4. Пагінація
+	    int booksInPage = sortedBooks.size() > 500 ? 500 : sortedBooks.size();
+	    double numberOfPages = Math.ceil((double) sortedBooks.size() / (double) (booksInPage == 0 ? 1 : booksInPage));
+	    List<Book> sublist;
+	    if (page != null && page > 0 && page <= numberOfPages) {
+	        int startIndex = booksInPage * (page - 1);
+	        int endIndex = booksInPage * (page - 1) + booksInPage;
+	        if (endIndex > sortedBooks.size())
+	            endIndex = sortedBooks.size();
+	        sublist = sortedBooks.subList(startIndex, endIndex);
+	        model.addObject("page", page);
+	    } else {
+	        sublist = sortedBooks.isEmpty() ? new ArrayList<>() : sortedBooks.subList(0, booksInPage);
+	        model.addObject("page", 1);
+	    }
+	    
+	    // Передаємо нові параметри назад у View, щоб JS-скрипт знав поточний стан
+	    model.addObject("sortField", sort);
+	    model.addObject("sortDir", dir);
 
-		} else {
-			sublist = sortedBooks.subList(0, booksInPage);
-			model.addObject("page", 1);
-		}
-		model.addObject("word", word);
-		model.addObject("booksOnPage", booksInPage);
-		model.addObject("numberOfPages", numberOfPages);
-		model.addObject("allbooks", sublist);
-		model.addObject("username", getUser());
-		model.addObject("numberOfAllBooks", sortedBooks.size());
-		model.addObject("allGenres", allGenres);
-		model.addObject("sections", sections);
+	    model.addObject("word", word);
+	    model.addObject("booksOnPage", booksInPage);
+	    model.addObject("numberOfPages", numberOfPages);
+	    model.addObject("allbooks", sublist);
+	    model.addObject("username", getUser());
+	    model.addObject("numberOfAllBooks", sortedBooks.size());
+	    model.addObject("allGenres", allGenres);
+	    model.addObject("sections", sections);
 
-		return model;
+	    return model;
 	}
+
+	private Comparator<Book> getBookComparator(String sortField) {
+	    switch (sortField) {
+	        case "name":
+	            return Comparator.comparing(b -> b.getName() != null ? b.getName().toLowerCase() : "");
+	        case "author":
+	            return Comparator.comparing(b -> b.getAuthor() != null ? b.getAuthor().toLowerCase() : "");
+	        case "registrationNumber":
+	            return Comparator.comparing(b -> b.getRegistrationNumber() != null ? b.getRegistrationNumber().toLowerCase() : "");
+	        case "edition":
+	            return Comparator.comparing(b -> b.getEdition() != null ? b.getEdition().toLowerCase() : "");
+	        case "language":
+	            return Comparator.comparing(b -> b.getLanguage() != null ? b.getLanguage().toLowerCase() : "");
+	        case "notes":
+	            return Comparator.comparing(b -> b.getNotes() != null ? b.getNotes().toLowerCase() : "");
+	        case "numberOfPages":
+	            return Comparator.comparing(Book::getNumberOfPages, Comparator.nullsLast(Comparator.naturalOrder()));
+	        case "price":
+	            return Comparator.comparing(Book::getPrice, Comparator.nullsLast(Comparator.naturalOrder()));
+	        case "year":
+	            return Comparator.comparing(Book::getYear, Comparator.nullsLast(Comparator.naturalOrder()));	            	            
+	        case "genre":
+	            return Comparator.comparing(
+	                b -> b.getGenre() != null && b.getGenre().getName() != null ? b.getGenre().getName().toLowerCase() : "", 
+	                Comparator.nullsLast(String::compareTo)
+	            );	            
+	        case "id":
+	        default:
+	            return Comparator.comparing(Book::getId, Comparator.nullsLast(Comparator.naturalOrder()));
+	    }
+	}
+
+
 
 	@GetMapping("/adminsearch")
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")

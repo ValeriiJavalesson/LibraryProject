@@ -15,6 +15,13 @@
 <link rel="stylesheet" href="style/css/allbooks.css">
 </head>
 <body>
+<script>
+    // Зчитуємо поточний стан сортування безпосередньо з моделі Spring
+    var currentSortField = "${sortField != null ? sortField : 'id'}";
+    var currentSortDir = "${sortDir != null ? sortDir : 'asc'}";
+    var page = ${page != null ? page : 1};
+    var word = "${word != null ? word : ''}";
+</script>
 
 	<c:set var="currentpage" value="${page}" />
 	<input id="currentpage" hidden="hidden" value="${page}">
@@ -74,6 +81,8 @@
 					<c:param name="page" value="${i}" />
 					<c:param name="word" value="${word}" />
 					<c:param name="genreId" value="${genreId}" />	
+					<c:param name="sort" value="${sortField}" /> 
+           			<c:param name="dir" value="${sortDir}" />
 											
 				</c:url>
 				<c:set var="sectionURL" value=""></c:set>							
@@ -126,16 +135,56 @@
 							</security:authorize>
 						</div>
 					</th>
-					<th colspan="1">Реєстра-ційний номер</th>
-					<th colspan="1">Автор</th>
-					<th colspan="1">Назва</th>
-					<th colspan="1">Видання</th>
-					<th colspan="1">Кількість сторінок</th>
-					<th colspan="1">Вартість</th>
-					<th colspan="1">Рік випуску</th>
-					<th colspan="1">Мова перекладу</th>
-					<th colspan="1">Жанр</th>
-					<th colspan="1">Опис</th>
+					<!-- <th colspan="1" onclick="sortBy('registrationNumber')">Реєстра-ційний номер</th>
+					<th colspan="1" onclick="sortBy('author')">Автор</th>
+					<th colspan="1" onclick="sortBy('name')">Назва</th>
+					<th colspan="1" onclick="sortBy('edition')">Видання</th>
+					<th colspan="1" onclick="sortBy('numberOfPages')">Кількість сторінок</th>
+					<th colspan="1" onclick="sortBy('price')">Вартість</th>
+					<th colspan="1" onclick="sortBy('year')">Рік випуску</th>
+					<th colspan="1" onclick="sortBy('language')">Мова перекладу</th>
+					<th colspan="1" onclick="sortBy('genre')">Жанр</th>
+					<th colspan="1" onclick="sortBy('notes')">Опис</th> -->
+					<th onclick="sortBy('registrationNumber')" style="cursor: pointer;">
+			            Реєстраційний номер 
+			            <c:if test="${sortField eq 'registrationNumber'}">${sortDir eq 'asc' ? ' ▲' : ' ▼'}</c:if>
+			        </th>
+			        <th onclick="sortBy('author')" style="cursor: pointer;">
+			            Автор 
+			            <c:if test="${sortField eq 'author'}">${sortDir eq 'asc' ? ' ▲' : ' ▼'}</c:if>
+			        </th>
+			        <th onclick="sortBy('name')" style="cursor: pointer;">
+			            Назва 
+			            <c:if test="${sortField eq 'name'}">${sortDir eq 'asc' ? ' ▲' : ' ▼'}</c:if>
+			        </th>
+			        <th onclick="sortBy('edition')" style="cursor: pointer;">
+			            Видання 
+			            <c:if test="${sortField eq 'edition'}">${sortDir eq 'asc' ? ' ▲' : ' ▼'}</c:if>
+			        </th>
+			        <th onclick="sortBy('numberOfPages')" style="cursor: pointer;">
+			            Кількість сторінок 
+			            <c:if test="${sortField eq 'numberOfPages'}">${sortDir eq 'asc' ? ' ▲' : ' ▼'}</c:if>
+			        </th>
+			        <th onclick="sortBy('price')" style="cursor: pointer;">
+			            Вартість 
+			            <c:if test="${sortField eq 'price'}">${sortDir eq 'asc' ? ' ▲' : ' ▼'}</c:if>
+			        </th>
+			        <th onclick="sortBy('year')" style="cursor: pointer;">
+			            Рік випуску 
+			            <c:if test="${sortField eq 'year'}">${sortDir eq 'asc' ? ' ▲' : ' ▼'}</c:if>
+			        </th>
+			        <th onclick="sortBy('language')" style="cursor: pointer;">
+			            Мова перекладу 
+			            <c:if test="${sortField eq 'language'}">${sortDir eq 'asc' ? ' ▲' : ' ▼'}</c:if>
+			        </th>
+			        <th onclick="sortBy('genre')" style="cursor: pointer;">
+			            Жанр 
+			            <c:if test="${sortField eq 'genre'}">${sortDir eq 'asc' ? ' ▲' : ' ▼'}</c:if>
+			        </th>
+			        <th onclick="sortBy('notes')" style="cursor: pointer;">
+			            Опис 
+			            <c:if test="${sortField eq 'notes'}">${sortDir eq 'asc' ? ' ▲' : ' ▼'}</c:if>
+			        </th>
 					<security:authorize access="hasRole('ROLE_ADMIN')">
 											
 						<th>
@@ -200,6 +249,8 @@
 				<c:param name="page" value="${i}" />
 				<c:param name="word" value="${word}" />
 				<c:param name="genreId" value="${genreId}" />	
+				<c:param name="sort" value="${sortField}" /> 
+           		<c:param name="dir" value="${sortDir}" />
 										
 			</c:url>
 			<c:set var="sectionURL" value=""></c:set>							

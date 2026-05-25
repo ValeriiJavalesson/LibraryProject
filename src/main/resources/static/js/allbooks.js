@@ -1,5 +1,5 @@
-let page = 1;
-let word = "";
+/*let page = 1;
+let word = "";*/
 let allGenres = '';
 let sections = [];
 $(document).ready(function() {
@@ -16,7 +16,7 @@ $(document).ready(function() {
 		sections.push($(this).val());
 	});
 	$.each(sections, function(i, item) {
-		$('input[type=checkbox][name='+ item + ']').attr('checked', true);
+		$('input[type=checkbox][name=' + item + ']').attr('checked', true);
 	});
 });
 
@@ -151,6 +151,7 @@ function editbook(book_id) {
 		content += '</td>';
 		content += '<td colspan="1"><textarea name="notes"></textarea></td>';
 		content += '<td colspan="2"><div class="editButtons"><button class="btn btn-success w-100" type="button" onclick="saveBook()">Зберегти</button>';
+		content += '<button class="btn btn-danger w-100" type="button" onclick="deleteBook(' + book_id + ')">Видалити</button>';
 		content += '<button class="btn btn-warning w-100" type="button" onclick="cancelEditBook()">Відміна</button></div></td>';
 		content += '</tr';
 		$('.allbooks_table').find(bookClass).after(content);
@@ -242,27 +243,12 @@ function displayFilters() {
 }
 
 function applyFilter() {
-	let objcts = $('input.filter_value[type=radio]:checked');
-	let sectionsUrl = '';
-	for (let i = 0; i < sections.length; i++) {
-		sectionsUrl += '&sections=' + sections[i];
-	}
-	if (sections.length == 0) sectionsUrl = '&sections=';
-	let url = "allbooks?page=" + page + "&word=" + word + "&genreId=" + $(objcts).val() + sectionsUrl;
-	window.location.href = url;
-
+	navigateWithFilter(word);
 }
 
+// Функція очищення пошукового слова
 function clearSearchedWord() {
-	let objcts = $('input.filter_value[type=radio]:checked');
-	let sectionsUrl = '';
-	for (let i = 0; i < sections.length; i++) {
-		sectionsUrl += '&sections=' + sections[i];
-	}
-	if (sections.length == 0) sectionsUrl = '&sections=';
-	let url = "allbooks?page=" + page + "&word=" + "&genreId=" + $(objcts).val() + sectionsUrl;
-	window.location.href = url;
-
+	navigateWithFilter('');
 }
 
 function section_filter() {
@@ -276,6 +262,50 @@ function section_filter() {
 	if (closedSection) sections.push('closedSection');
 	applyFilter();
 }
+
+function navigateWithFilter(searchWord) {
+	const genreId = $('input.filter_value[type=radio]:checked').val() || '';
+
+	const params = new URLSearchParams({
+		page: page,
+		word: searchWord,
+		genreId: genreId,
+		sort: currentSortField, // Зберігаємо поточне поле сортування
+		dir: currentSortDir     // Зберігаємо поточний напрямок сортування
+	});
+
+	if (sections && sections.length > 0) {
+		sections.forEach(section => params.append('sections', section));
+	} else {
+		params.append('sections', '');
+	}
+
+	window.location.href = `allbooks?${params.toString()}`;
+}
+
+function sortBy(fieldName) {
+	if (currentSortField === fieldName) {
+		currentSortDir = (currentSortDir === 'asc') ? 'desc' : 'asc';
+	} else {
+		currentSortField = fieldName;
+		currentSortDir = 'asc';
+	}
+	navigateWithFilter(word);
+}
+
+function deleteBook(book_id) {
+	var id = { id: book_id };
+	$.ajax({
+		url: 'delete_book',
+		type: 'DELETE',
+		data: id,
+		complete: function(data) {
+			alert(data.responseText);
+			window.location.reload();
+		}
+	});
+}
+
 
 
 

@@ -1,0 +1,154 @@
+.main-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    button.newgenrebutton {
+        padding: 13px;
+        border: solid 1px gray;
+        border-radius: 10px;
+        background-color: #154868d6;
+        color: white;
+        margin-top: 10px;
+
+        &:hover {
+            background-color: rgb(27 105 154 / 84%);
+        }
+    }
+
+    .form_wrap {
+        width: 26rem;
+        padding: 1rem 1rem;
+        background-color: #f0f8ff5e;
+        margin-top: 10px;
+        color: black;
+        border-radius: 9px;
+    }
+
+    table {
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #beb7b1de;
+        width: 30%;
+        border-radius: 10px;
+        overflow: hidden;
+
+        tbody {
+            tr {
+                height: 2rem;
+                transition-duration: 300ms;
+                transition-property: background-color;
+
+                .genre_form_buttons {
+                    display: flex;
+                    flex-direction: row;
+                    flex-wrap: nowrap;
+                    justify-content: space-around;
+                }
+
+                .save_genre_button {
+                    height: 2rem;
+
+                    background: {
+                        image: url(../images/save.png);
+                        size: 1.5rem;
+                        repeat: no-repeat;
+                        position: center;
+                    }
+                }
+
+                .close_genre_button {
+                    height: 2rem;
+
+                    background: {
+                        image: url(../images/cancel.png);
+                        size: 1.5rem;
+                        repeat: no-repeat;
+                        position: center;
+                    }
+                }
+
+                button {
+                    background-color: #00000000;
+                    border: none;
+                    width: 25%;
+                    border-radius: 4px;
+                    transition-duration: 200ms;
+                    transition-property: border-color;
+
+                    border: {
+                        color: rgba(255, 255, 255, 0);
+                        width: 3px;
+                        style: solid;
+                    }
+
+                    &:hover {
+                        border: {
+                            color: white;
+                        }
+                    }
+                }
+
+                td {
+                    padding: 0 10px;
+
+                    .genre_edit {
+                        width: 100%;
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: center;
+                        flex-wrap: nowrap;
+                        align-items: center;
+
+                        .edit_buttons,
+                        .confirm_buttons {
+                            display: flex;
+                            flex-direction: row;
+                            width: 100%;
+                            justify-content: space-around;
+
+                            button:hover{
+                                color: #ffffff;
+                            }
+
+                            .edit_button {
+                                height: 2rem;
+
+                                background: {
+                                    image: url(../images/edit.png);
+                                    size: 1.5rem;
+                                    repeat: no-repeat;
+                                    position: center;
+                                }
+                            }
+
+                            .confirm_delete_button {
+                                height: 2rem;
+
+                                background: {
+                                    image: url(../images/delete.png);
+                                    size: 1.5rem;
+                                    repeat: no-repeat;
+                                    position: center;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                &:hover {
+                    background-color: #000000ab;
+                    color: white;
+                }
+                &:hover button{
+                    color: white;
+                }
+
+                &.genre_row:not(:last-child) {
+                    border-bottom: solid 1px black;
+                }
+            }
+        }
+    }
+}

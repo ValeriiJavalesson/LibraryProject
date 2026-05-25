@@ -1,0 +1,42 @@
+@font-face {
+	font-family: "Jura";
+	src: url("../fonts/Jura/Jura-VariableFont_wght.ttf");
+}
+
+@font-face {
+	font-family: "Cormorant_Infant";
+	src: url("../fonts/Cormorant_Infant/CormorantInfant-Regular.ttf");
+}
+
+@font-face {
+	font-family: "Cormorant_Infant";
+	src: url("../fonts/Cormorant_Infant/CormorantInfant-Bold.ttf");
+	font-weight: bold;
+}
+
+@font-face {
+	font-family: "Cormorant_Infant";
+	src: url("../fonts/Cormorant_Infant/CormorantInfant-Italic.ttf");
+	font-weight: italic;
+}
+
+@font-face {
+	font-family: "Rubik";
+	src: url("../fonts/Rubik.ttf");
+}
+
+@font-face {
+	font-family: "Tektur";
+	src: url("../fonts/Tektur.ttf");
+}
+
+@font-face {
+	font-family: "Bona";
+	src: url("../fonts/Bona/BonaNovaSC-Regular.ttf");
+}
+
+@font-face {
+	font-family: "Bona";
+	src: url("../fonts/Bona/BonaNovaSC-Bold.ttf");
+	font-weight: bold;
+}
