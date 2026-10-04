@@ -55,5 +55,10 @@ public class BookServiceImpl implements BookService {
 		logger.info("Get all books");
 		return bookRepository.findAll();
 	}
+	@Override
+	public List<Book> findTop12BooksPerGenre() {
+	    logger.info("Get top 12 books per genre from DB");
+	    return bookRepository.findTop12BooksPerGenre();
+	}
 
 }

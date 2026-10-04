@@ -12,4 +12,5 @@ public interface BookService {
 	Book updateBook(Book book);
 	void deleteById(Long id);
 	List<Book> findAll();
+	List<Book> findTop12BooksPerGenre();
 }

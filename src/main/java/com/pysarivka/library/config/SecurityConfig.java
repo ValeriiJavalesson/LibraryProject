@@ -31,7 +31,7 @@ public class SecurityConfig {
 	@Value("${project.security.remember-me.token-validity-seconds}")
 	private int tokenValiditySeconds;
 	@Autowired
-    private DataSource dataSource;
+	private DataSource dataSource;
 
 	@Bean
 	public UserDetailsService userDetailsService() {
@@ -48,28 +48,26 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(AbstractHttpConfigurer::disable)
-				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/cabinet/**")
-						.authenticated()
-						.requestMatchers("/**")
-						.permitAll())
-				.formLogin(formlogin -> formlogin
-						.loginPage("/login")
-						.defaultSuccessUrl("/books", true)
-						.failureUrl("/login?error=true")
-						.permitAll())
-				.rememberMe(remember -> remember.key(rememberMeKey)
-						.tokenValiditySeconds(tokenValiditySeconds)
-						.tokenRepository(persistentTokenRepository())
-						.userDetailsService(userDetailsService()))
-				.logout((logout) -> logout
-						.logoutSuccessHandler(logoutSuccessHandler()));
+				.authorizeHttpRequests(auth -> auth.requestMatchers("/cabinet/**").authenticated()
+						.requestMatchers("/", "/home", "/books", "/login").permitAll() 
+						.requestMatchers("/**").permitAll())
+				.formLogin(formlogin -> formlogin.loginPage("/login").defaultSuccessUrl("/books", true)
+						.failureUrl("/login?error=true").permitAll())
+				.rememberMe(remember -> remember.key(rememberMeKey).tokenValiditySeconds(tokenValiditySeconds)
+						.tokenRepository(persistentTokenRepository()).userDetailsService(userDetailsService()))
+				.logout((logout) -> logout.logoutSuccessHandler(logoutSuccessHandler()));
 		return http.build();
 	}
 
+//	@Bean
+//	public LogoutSuccessHandler logoutSuccessHandler() {
+//		return new CustomLogoutSuccessHandler();
+//	}
 	@Bean
 	public LogoutSuccessHandler logoutSuccessHandler() {
-		return new CustomLogoutSuccessHandler();
+		CustomLogoutSuccessHandler handler = new CustomLogoutSuccessHandler();
+		handler.setDefaultTargetUrl("/login?logout=true"); // Вкажіть бажаний URL тут
+		return handler;
 	}
 
 	@Bean

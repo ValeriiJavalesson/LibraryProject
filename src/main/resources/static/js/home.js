@@ -1,16 +1,16 @@
 $(document).ready(function() {
 	changeFontSize();
-	changeBookHeight();
+	/*changeBookHeight();*/
 });
 
-function changeFontSize() {
+/*function changeFontSize() {
 	let names = $('div.book_name');
 	let authors = $('div.book_author');
 
 
 	names.each(function() {
 		let l = $(this).text().length;
-		if (l => 45 && l < 60) $(this).css(
+		if (l >= 45 && l < 60) $(this).css(
 			{ 'font-size': '0.7rem' }
 		);
 		if (l >= 60) $(this).css(
@@ -19,16 +19,37 @@ function changeFontSize() {
 	});
 	authors.each(function() {
 		let l = $(this).text().length;
-		if (l => 20 && l < 30) $(this).css(
+		if (l >= 20 && l < 30) $(this).css(
 			{ 'font-size': '0.7rem' }
 		);
 		if (l >= 30) $(this).css(
 			{ 'font-size': '0.5rem' }
 		);
 	});
+}*/
+
+function changeFontSize() {
+    $('div.book_name').each(function() {
+        let l = $(this).text().length;
+        if (l >= 60) {
+            $(this).css('font-size', '0.5rem');
+        } else if (l >= 45) {
+            $(this).css('font-size', '0.7rem');
+        }
+    });
+
+    $('div.book_author').each(function() {
+        let l = $(this).text().length;
+        if (l >= 30) {
+            $(this).css('font-size', '0.5rem');
+        } else if (l >= 20) {
+            $(this).css('font-size', '0.7rem');
+        }
+    });
 }
 
-function changeBookHeight() {
+
+/*function changeBookHeight() {
 	let books = $('div.book');
 	books.each(function() {
 		let p = $(this).data('pages');
@@ -54,5 +75,5 @@ function changeBookHeight() {
 
 	});
 
-}
+}*/
 

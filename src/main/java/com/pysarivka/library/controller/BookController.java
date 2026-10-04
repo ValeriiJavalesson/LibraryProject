@@ -2,6 +2,7 @@ package com.pysarivka.library.controller;
 
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -12,6 +13,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,13 +42,29 @@ public class BookController {
 	@Autowired
 	private GenreServiceImpl genreService;
 
-	@RequestMapping("/")
-	public ModelAndView init() {
-		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		if (principal instanceof UserDetails) {
-			return books();
-		}
-		return home();
+//	@RequestMapping("/")
+//	public ModelAndView init() {
+//		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//		if (principal instanceof UserDetails) {
+//			return books();
+//		}
+//		return home();
+//	}
+	
+	
+
+	@GetMapping("/")
+	public ModelAndView handleRootRouting(Authentication authentication) {
+	    // Якщо користувач авторизований і це НЕ анонімний гість
+	    if (authentication != null && authentication.isAuthenticated() 
+	            && !(authentication instanceof AnonymousAuthenticationToken)) {
+	        
+	        // Виконуємо редірект на сторінку з книгами
+	        return new ModelAndView("redirect:/books");
+	    }
+	    
+	    // Якщо неавторизований — редірект на гостьову сторінку
+	    return new ModelAndView("redirect:/home"); 
 	}
 
 	@RequestMapping("/books")
@@ -139,27 +158,52 @@ public class BookController {
 		return home();
 	}
 
+//	@GetMapping("/home")
+//	public ModelAndView home() {
+//		ModelAndView model = new ModelAndView("home");
+//		List<Book> allBooks = null;
+//		allBooks = bookService.findAll();
+//		Map<Genre, List<Book>> allgenres = allBooks.stream().filter(b -> !b.getGenre().getId().equals((long) 1))
+//				.collect(Collectors.groupingBy(Book::getGenre, Collectors.toList()));
+//		allgenres.entrySet().stream()
+//				.forEach(entry -> entry.setValue(entry.getValue().stream().limit((long) 12).toList()));
+//		List<Book> randomBooks = new ArrayList<Book>();
+//		while (randomBooks.size() < 12) {
+//			int randomNumber = (int) (Math.random() * (allBooks.size() - 0));
+//			Book book = allBooks.get(randomNumber);
+//			if (!randomBooks.contains(book))
+//				randomBooks.add(book);
+//		}
+//		model.addObject("allgenres", allgenres);
+//		model.addObject("allbooks", randomBooks);
+//		model.addObject("username", getUser());
+//		return model;
+//	}
 	@GetMapping("/home")
 	public ModelAndView home() {
-		ModelAndView model = new ModelAndView("home");
-		List<Book> allBooks = null;
-		allBooks = bookService.findAll();
-		Map<Genre, List<Book>> allgenres = allBooks.stream().filter(b -> !b.getGenre().getId().equals((long) 1))
-				.collect(Collectors.groupingBy(Book::getGenre, Collectors.toList()));
-		allgenres.entrySet().stream()
-				.forEach(entry -> entry.setValue(entry.getValue().stream().limit((long) 12).toList()));
-		List<Book> randomBooks = new ArrayList<Book>();
-		while (randomBooks.size() < 12) {
-			int randomNumber = (int) (Math.random() * (allBooks.size() - 0));
-			Book book = allBooks.get(randomNumber);
-			if (!randomBooks.contains(book))
-				randomBooks.add(book);
-		}
-		model.addObject("allgenres", allgenres);
-		model.addObject("allbooks", randomBooks);
-		model.addObject("username", getUser());
-		return model;
+	    ModelAndView model = new ModelAndView("home");
+	    
+	    // 1. Замість важкого findAll() беремо вже готові та обрізані базою даних книги!
+	    List<Book> limitedBooks = bookService.findTop12BooksPerGenre();
+	    
+	    // 2. Просто групуємо їх (вони вже обмежені по 12 штук)
+	    Map<Genre, List<Book>> allgenres = limitedBooks.stream()
+	            .collect(Collectors.groupingBy(Book::getGenre));
+
+	    // 3. Робимо випадкові 12 книг з цього ж невеликого списку
+	    List<Book> randomBooks = new ArrayList<>(limitedBooks);
+	    Collections.shuffle(randomBooks);
+	    if (randomBooks.size() > 12) {
+	        randomBooks = randomBooks.subList(0, 12);
+	    }
+
+	    model.addObject("allgenres", allgenres);
+	    model.addObject("allbooks", randomBooks);
+	    model.addObject("username", getUser());
+	    return model;
 	}
+
+
 
 	@GetMapping("/searchl")
 	public ModelAndView searchByLetter(@RequestParam String word) {

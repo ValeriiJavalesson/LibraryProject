@@ -12,7 +12,7 @@
 	<nav class="">
 		<div class="nav-container">
 			<div>
-				<a class="brand" href="home" data-content="ПИСАРІВСЬКА">Бібліотека</a>
+				<a class="brand" href="/" data-content="ПИСАРІВСЬКА">Бібліотека</a>
 				<security:authorize access="hasRole('ROLE_ADMIN')">
 					<a class="btn btn-primary" href="books">Всі книги</a>
 					<a class="btn btn-primary" href="newbook?id=0">Додати нову книгу</a>
