@@ -48,25 +48,24 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(AbstractHttpConfigurer::disable)
-				.authorizeHttpRequests(auth -> auth.requestMatchers("/cabinet/**").authenticated()
+				.authorizeHttpRequests(auth -> auth.requestMatchers("/cabinet/**", "/documentation/**").authenticated()
 						.requestMatchers("/", "/home", "/books", "/login").permitAll() 
 						.requestMatchers("/**").permitAll())
 				.formLogin(formlogin -> formlogin.loginPage("/login").defaultSuccessUrl("/books", true)
 						.failureUrl("/login?error=true").permitAll())
+				.headers(headers -> headers
+			            .frameOptions(frameOptions -> frameOptions.sameOrigin()))
 				.rememberMe(remember -> remember.key(rememberMeKey).tokenValiditySeconds(tokenValiditySeconds)
 						.tokenRepository(persistentTokenRepository()).userDetailsService(userDetailsService()))
-				.logout((logout) -> logout.logoutSuccessHandler(logoutSuccessHandler()));
+				.logout((logout) -> logout.logoutSuccessHandler(logoutSuccessHandler())
+						);
 		return http.build();
 	}
-
-//	@Bean
-//	public LogoutSuccessHandler logoutSuccessHandler() {
-//		return new CustomLogoutSuccessHandler();
-//	}
+	
 	@Bean
 	public LogoutSuccessHandler logoutSuccessHandler() {
 		CustomLogoutSuccessHandler handler = new CustomLogoutSuccessHandler();
-		handler.setDefaultTargetUrl("/login?logout=true"); // Вкажіть бажаний URL тут
+		handler.setDefaultTargetUrl("/login?logout=true");
 		return handler;
 	}
 

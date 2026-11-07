@@ -40,18 +40,7 @@ public class BookController {
 	@Autowired
 	private BookServiceImpl bookService;
 	@Autowired
-	private GenreServiceImpl genreService;
-
-//	@RequestMapping("/")
-//	public ModelAndView init() {
-//		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//		if (principal instanceof UserDetails) {
-//			return books();
-//		}
-//		return home();
-//	}
-	
-	
+	private GenreServiceImpl genreService;	
 
 	@GetMapping("/")
 	public ModelAndView handleRootRouting(Authentication authentication) {
@@ -158,27 +147,6 @@ public class BookController {
 		return home();
 	}
 
-//	@GetMapping("/home")
-//	public ModelAndView home() {
-//		ModelAndView model = new ModelAndView("home");
-//		List<Book> allBooks = null;
-//		allBooks = bookService.findAll();
-//		Map<Genre, List<Book>> allgenres = allBooks.stream().filter(b -> !b.getGenre().getId().equals((long) 1))
-//				.collect(Collectors.groupingBy(Book::getGenre, Collectors.toList()));
-//		allgenres.entrySet().stream()
-//				.forEach(entry -> entry.setValue(entry.getValue().stream().limit((long) 12).toList()));
-//		List<Book> randomBooks = new ArrayList<Book>();
-//		while (randomBooks.size() < 12) {
-//			int randomNumber = (int) (Math.random() * (allBooks.size() - 0));
-//			Book book = allBooks.get(randomNumber);
-//			if (!randomBooks.contains(book))
-//				randomBooks.add(book);
-//		}
-//		model.addObject("allgenres", allgenres);
-//		model.addObject("allbooks", randomBooks);
-//		model.addObject("username", getUser());
-//		return model;
-//	}
 	@GetMapping("/home")
 	public ModelAndView home() {
 	    ModelAndView model = new ModelAndView("home");

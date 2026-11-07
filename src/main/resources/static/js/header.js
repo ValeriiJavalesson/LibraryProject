@@ -16,7 +16,9 @@ function login() {
 function logout() {
 	window.location.href = "logout";
 }
-
+function goToDocuments() {
+	window.location.href = "documentation";
+}
 
 searchBar = document.getElementById('search');
 searchBar.addEventListener("keydown", (e) => {
@@ -32,16 +34,7 @@ function findBook() {
 	var word = $("input#search").val();
 	word = word.trim();
 	if (word.length > 2) {
-		window.location = `searchw?word=${word}`;
-		/*$.get("getbooksbyword", { word: word }, function(data) {
-			if (data !== '') {
-				filteredBooks = data;
-				searchedword = word;
-			}
-		}).done(function() {
-			showResults();
-			$("input#search").val("");
-		});*/
+		window.location = `searchw?word=${word}`;		
 	}
 }
 function findBookAdmin() {
@@ -59,32 +52,9 @@ function findBookAdmin() {
 }
 
 function getBooks(word) {
-	/*searchedword = '"' + word + '"';
-	if (books == null) {
-		$.get("getbooksbyword", { word: word }, function(data) {
-			if (data !== '') {
-				books = data;
-				filteredBooks = data;
-			}
-		});
-	}
-	window.location = `searchw?word=${word}`;*/
 };
 
 function getBooksByLetter(word) {
-	/*searchedword = '"' + word + '"';
-	if (books == null) {
-		$.get("getbooksbyfirstletter", { word: word }, function(data) {
-			if (data !== '') {
-				filteredBooks = data;
-				filteredBooks.sort((a, b) => a.name > b.name ? 1 : -1);
-				searchedword = word;
-			}
-		}).done(function() {
-			showResults();
-			$("input#search").val("");
-		});
-	}*/
 	window.location = `searchl?word=${word}`;
 
 };

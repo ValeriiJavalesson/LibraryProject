@@ -135,16 +135,6 @@
 							</security:authorize>
 						</div>
 					</th>
-					<!-- <th colspan="1" onclick="sortBy('registrationNumber')">Реєстра-ційний номер</th>
-					<th colspan="1" onclick="sortBy('author')">Автор</th>
-					<th colspan="1" onclick="sortBy('name')">Назва</th>
-					<th colspan="1" onclick="sortBy('edition')">Видання</th>
-					<th colspan="1" onclick="sortBy('numberOfPages')">Кількість сторінок</th>
-					<th colspan="1" onclick="sortBy('price')">Вартість</th>
-					<th colspan="1" onclick="sortBy('year')">Рік випуску</th>
-					<th colspan="1" onclick="sortBy('language')">Мова перекладу</th>
-					<th colspan="1" onclick="sortBy('genre')">Жанр</th>
-					<th colspan="1" onclick="sortBy('notes')">Опис</th> -->
 					<th onclick="sortBy('registrationNumber')" style="cursor: pointer;">
 			            Реєстраційний номер 
 			            <c:if test="${sortField eq 'registrationNumber'}">${sortDir eq 'asc' ? ' ▲' : ' ▼'}</c:if>

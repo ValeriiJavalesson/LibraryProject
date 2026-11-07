@@ -32,6 +32,9 @@
 				<security:authorize access="!isAuthenticated()">
 					<button class="btn btn-outline-dark me-2" onclick="findBook()">Пошук</button>
 				</security:authorize>
+				<security:authorize access="isAuthenticated()">
+					<button class="btn btn-outline-dark me-2" onclick="goToDocuments()">Документи</button>
+				</security:authorize>
 				<security:authorize access="!isAuthenticated()">
 					<button class="btn btn-secondary" onclick="login()">Ввійти</button>
 				</security:authorize>
